@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'dashboard_screen.dart';
+import 'package:http/http.dart' as http;
 
 const users = const {
   'dribbble@gmail.com': '12345',
@@ -32,7 +35,7 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
-  Future<String> _recoverPassword(String name) {
+  Future<String?> _recoverPassword(String name) {
     debugPrint('Name: $name');
     return Future.delayed(loginTime).then((_) {
       if (!users.containsKey(name)) {
@@ -42,12 +45,43 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
+  Future<String?> _login(LoginData data) async {
+    debugPrint('LoginData');
+    return Future.delayed(loginTime).then((_) async {
+      final response = await http.post(
+        Uri.parse('http://127.0.0.1:2021/login'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'username': data.name,
+          'password': data.password
+        }),
+      );
+      debugPrint('LoginData');
+      if (response.statusCode == 200) {
+        // If the server did return a 201 CREATED response,
+        // then parse the JSON.
+        LoginPayload payload = LoginPayload.fromJson(jsonDecode(response.body));
+        if (payload.token == null){
+          return 'User not exists';
+        }
+      } else {
+        // If the server did not return a 201 CREATED response,
+        // then throw an exception.
+        return 'There are networking problem';
+      }
+      return null;
+    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
       title: 'ECORP',
       logo: AssetImage('assets/images/29072.png'),
-      onLogin: _authUser,
+      onLogin: _login,
       onSignup: _signupUser,
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -57,4 +91,18 @@ class LoginScreen extends StatelessWidget {
       onRecoverPassword: _recoverPassword,
     );
   }
+}
+
+class LoginPayload {
+  final String token;
+
+  const LoginPayload({required this.token});
+
+  factory LoginPayload.fromJson(Map<String, dynamic> json) {
+    return LoginPayload(
+      token: json['token'],
+    );
+  }
+
+
 }
