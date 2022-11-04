@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dashboard_screen.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,6 +15,7 @@ class LoginScreen extends StatelessWidget {
   static const routeName = '/auth';
 
   Duration get loginTime => Duration(milliseconds: 2250);
+  final storage = const FlutterSecureStorage();
 
   Future<String?> _authUser(LoginData data) {
     debugPrint('Name: ${data.name}, Password: ${data.password}');
@@ -66,10 +68,12 @@ class LoginScreen extends StatelessWidget {
         if (payload.token == null){
           return 'User not exists';
         }
+        await storage.write(key: 'token', value: payload.token);
       } else {
         // If the server did not return a 201 CREATED response,
         // then throw an exception.
         return 'There are networking problem';
+
       }
       return null;
     });
