@@ -5,14 +5,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final storage = const FlutterSecureStorage();
 
-class ApproverList extends StatelessWidget {
+class MonitoringScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: BelajarGetData(),
+        body: MonitoringList(),
       ),
     );
   }
@@ -111,15 +111,15 @@ class _ApprovalItem extends StatelessWidget {
 class MyStatelessWidget extends StatelessWidget {
   final String apiUrl = 'https://reqres.in/api/users?per_page=15';
 
-  Future<List<dynamic>> _fetchDataUsers() async {
+  Future<List<dynamic>> _fetchDataMonitorings() async {
     var token = await storage.read(key: 'token');
     debugPrint('token : ' + token.toString());
     final response = await http.get(
-      Uri.parse('http://localhost:2021/experience'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer: ' + token.toString(),
-      }
+        Uri.parse('http://localhost:2021/experience'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer: ' + token.toString(),
+        }
     );
 
     return json.decode(response.body);
@@ -127,16 +127,16 @@ class MyStatelessWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _fetchDataUsers();
+    _fetchDataMonitorings();
     return ListView(
       padding: const EdgeInsets.all(8.0),
       itemExtent: 106.0,
       children: <ApprovalItem>[
         ApprovalItem(
-            approverid: "1235",
-            pondid: "1",
-            nik: "12341515",
-            status: "Approved",
+          approverid: "1235",
+          pondid: "1",
+          nik: "12341515",
+          status: "Approved",
         ),
         ApprovalItem(
           approverid: "1235",
@@ -149,12 +149,12 @@ class MyStatelessWidget extends StatelessWidget {
   }
 }
 
-class BelajarGetData extends StatelessWidget {
+class MonitoringList extends StatelessWidget {
 
-  Future<List<dynamic>> _fecthDataUsers() async {
+  Future<List<dynamic>> _fetchMonitoringsData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/experiences'),
+        Uri.parse('http://localhost:2021/monitorings'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -166,36 +166,36 @@ class BelajarGetData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: FutureBuilder<List<dynamic>>(
-          future: _fecthDataUsers(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  padding: EdgeInsets.all(10),
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: ListTile(
-                        leading: FlutterLogo(),
-                        title: Text('Nik : ' + snapshot.data[index]['nik']),
-                        subtitle: Text("Nama : " + snapshot.data[index]['name'] + " \nAlamat : " + snapshot.data[index]['address'] + "\nStatus : " + snapshot.data[index]['current_status']),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailScreen(nik: snapshot.data[index]['nik'], address: snapshot.data[index]['address']),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  });
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
-      );
+      child: FutureBuilder<List<dynamic>>(
+        future: _fetchMonitoringsData(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+                padding: EdgeInsets.all(10),
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    child: ListTile(
+                      leading: FlutterLogo(),
+                      title: Text("Fund ID : " + snapshot.data[index]['fund_id']),
+                      subtitle: Text("Nik : " + snapshot.data[index]['nik'] + "\nNama : " + snapshot.data[index]['name'] + " \nTotal Panen : " + snapshot.data[index]['total_spawning'].toString() + " kg\nTipe Ikan : " + snapshot.data[index]['fish_type']),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailScreen(nik: snapshot.data[index]['nik'], address: snapshot.data[index]['address']),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                });
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );
   }
 }
 

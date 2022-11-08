@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'farmer_input.dart';
 import 'approverlist_screen.dart';
+import 'monitoring_screen.dart';
+
 
 void main() {
   runApp(const DashboardScreen());
@@ -31,7 +33,7 @@ void main() {
           children: [
             FarmerInput(),
             ApproverList(),
-            Icon(Icons.directions_car, size: 350),
+            MonitoringScreen(),
           ],
         ),
       ),
