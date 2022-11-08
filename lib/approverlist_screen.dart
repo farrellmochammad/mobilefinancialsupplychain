@@ -12,7 +12,7 @@ class ApproverList extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: BelajarGetData(),
+        body: ApproverListView(),
       ),
     );
   }
@@ -149,9 +149,9 @@ class MyStatelessWidget extends StatelessWidget {
   }
 }
 
-class BelajarGetData extends StatelessWidget {
+class ApproverListView extends StatelessWidget {
 
-  Future<List<dynamic>> _fecthDataUsers() async {
+  Future<List<dynamic>> _fecthExperiencesData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
         Uri.parse('http://localhost:2021/experiences'),
@@ -167,7 +167,7 @@ class BelajarGetData extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         child: FutureBuilder<List<dynamic>>(
-          future: _fecthDataUsers(),
+          future: _fecthExperiencesData(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               return ListView.builder(
@@ -207,6 +207,18 @@ class DetailScreen extends StatelessWidget {
   final String nik;
   final String address;
 
+  Future<List<dynamic>> _fecthExperienceData() async {
+    var token = await storage.read(key: 'token');
+    var result = await http.get(
+        Uri.parse('http://localhost:2021/experience/' + this.nik),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer: ' + token.toString(),
+        }
+    );
+    return json.decode(result.body)['data'];
+  }
+
   @override
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
@@ -216,7 +228,29 @@ class DetailScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Text(address),
+        child: Container(
+          child: FutureBuilder<List<dynamic>>(
+            future: _fecthExperienceData(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    padding: EdgeInsets.all(10),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Card(
+                        child: ListTile(
+                          leading: FlutterLogo(),
+                          title: Text('Nik : ' + snapshot.data[index]['nik']),
+                          subtitle: Text("Nama : " + snapshot.data[index]['name'] + " \nAlamat : " + snapshot.data[index]['address'] + "\nStatus : " + snapshot.data[index]['current_status']),
+                        ),
+                      );
+                    });
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        ),
       ),
     );
   }

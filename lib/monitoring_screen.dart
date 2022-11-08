@@ -183,7 +183,7 @@ class MonitoringList extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DetailScreen(nik: snapshot.data[index]['nik'], address: snapshot.data[index]['address']),
+                            builder: (context) => DetailScreen(fundid: snapshot.data[index]['fund_id']),
                           ),
                         );
                       },
@@ -201,22 +201,55 @@ class MonitoringList extends StatelessWidget {
 
 class DetailScreen extends StatelessWidget {
   // In the constructor, require a Todo.
-  const DetailScreen({super.key, required this.nik, required this.address});
+  const DetailScreen({super.key, required this.fundid});
 
   // Declare a field that holds the Todo.
-  final String nik;
-  final String address;
+  final String fundid;
+
+  Future<List<dynamic>> _fetchMonitoringData() async {
+    var token = await storage.read(key: 'token');
+    var result = await http.get(
+        Uri.parse('http://localhost:2021/monitoring/' + this.fundid),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer: ' + token.toString(),
+        }
+    );
+    return json.decode(result.body)['data'];
+  }
 
   @override
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
       appBar: AppBar(
-        title: Text("Details of " + nik),
+        title: Text("Details of fundid " + fundid),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Text(address),
+        child: Container(
+          child: FutureBuilder<List<dynamic>>(
+            future: _fetchMonitoringData(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    padding: EdgeInsets.all(10),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Card(
+                        child: ListTile(
+                          leading: FlutterLogo(),
+                          title: Text("Fund ID : " + snapshot.data[index]['fund_id']),
+                          subtitle: Text("Nik : " + snapshot.data[index]['nik'] + "\nNama : " + snapshot.data[index]['name'] + " \nTotal Panen : " + snapshot.data[index]['total_spawning'].toString() + " kg\nTipe Ikan : " + snapshot.data[index]['fish_type']),
+                        ),
+                      );
+                    });
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        ),
       ),
     );
   }
