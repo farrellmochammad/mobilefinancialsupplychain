@@ -41,7 +41,6 @@ Future<Response> insertFarmer(String nik,String name,String phone,String dob,Str
 
 class FarmerInput extends StatelessWidget {
 
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

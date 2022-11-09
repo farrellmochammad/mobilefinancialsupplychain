@@ -69,6 +69,7 @@ class LoginScreen extends StatelessWidget {
           return 'User not exists';
         }
         await storage.write(key: 'token', value: payload.token);
+        await storage.write(key: 'permission', value: payload.permission);
       } else {
         // If the server did not return a 201 CREATED response,
         // then throw an exception.
@@ -99,12 +100,14 @@ class LoginScreen extends StatelessWidget {
 
 class LoginPayload {
   final String token;
+  final String permission;
 
-  const LoginPayload({required this.token});
+  const LoginPayload({required this.token, required this.permission});
 
   factory LoginPayload.fromJson(Map<String, dynamic> json) {
     return LoginPayload(
       token: json['token'],
+      permission: json['permission']
     );
   }
 
