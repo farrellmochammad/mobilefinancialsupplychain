@@ -122,7 +122,7 @@ class DetailScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddMonitoring()));
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => MonitoringInput()));
         },
         backgroundColor: Colors.green,
         child: const Icon(Icons.add),
@@ -131,18 +131,171 @@ class DetailScreen extends StatelessWidget {
   }
 }
 
-class AddMonitoring extends StatelessWidget {
-  const AddMonitoring({super.key});
+
+class MonitoringInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Add Pond Id"),
-        ),
-        body: const Center(
-          child: Text('Hello World'),
-        ),
+          appBar: AppBar(
+            title: Text("Add monitoring"),
+          ),
+        body: MonitoringForm(),
       );
+  }
+}
+
+// Create a Form widget.
+class MonitoringForm extends StatefulWidget {
+  @override
+  MonitoringFormState createState() {
+    return MonitoringFormState();
+  }
+}
+
+// Create a corresponding State class, which holds data related to the form.
+class MonitoringFormState extends State<MonitoringForm> {
+  // Create a global key that uniquely identifies the Form widget
+  // and allows validation of the form.
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _temperatureController = TextEditingController();
+  final TextEditingController _humidityController = TextEditingController();
+
+  Future<Response>? _futureResponse;
+
+  Future<Response> _insertMonitoring(int weight,int temperature,int humidity) async {
+    var token = await storage.read(key: 'token');
+    final response = await http.post(
+      Uri.parse('http://localhost:2021/experience'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer: ' + token.toString(),
+      },
+      body: jsonEncode(<String, dynamic>{
+        'weight': weight,
+        'temperature': temperature,
+        'humidity': humidity,
+      }),
+    );
+
+    if (response.statusCode == 202) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      return Response.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      throw Exception('Failed to create album.');
+    }
+  }
+
+  FutureBuilder<Response> buildFutureBuilder() {
+    return FutureBuilder<Response>(
+      future: _futureResponse,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Text(snapshot.data!.status);
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+
+  ListView buildListView(){
+    return ListView(
+      children: <Widget>[
+        TextFormField(
+          controller: _weightController,
+          decoration: const InputDecoration(
+            icon: const Icon(Icons.monitor_weight_outlined),
+            hintText: 'Dalam kg',
+            labelText: 'Berat',
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter some text';
+            }
+            return null;
+          },
+        ),
+        TextFormField(
+          controller: _temperatureController,
+          decoration: const InputDecoration(
+            icon: const Icon(Icons.severe_cold),
+            hintText: 'Dalam Celcius',
+            labelText: 'Suhu',
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter some text';
+            }
+            return null;
+          },
+        ),
+        TextFormField(
+          controller: _humidityController,
+          decoration: const InputDecoration(
+            icon: const Icon(Icons.add_box_rounded),
+            hintText: 'Dalam persen',
+            labelText: 'Tingkat Kelembapan',
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter valid phone number';
+            }
+            return null;
+          },
+        ),
+        Container(
+          width: 200,
+          height: 45,
+          child: TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: Color(0xffF18265),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            onPressed: () {
+              setState(() {
+                _futureResponse = _insertMonitoring(int.parse(_weightController.text),int.parse(_temperatureController.text), int.parse(_humidityController.text));
+              });
+            },
+            child: Text(
+              "Kirim Data",
+              style: TextStyle(
+                color: Color(0xffffffff),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    // Build a Form widget using the _formKey created above.
+    return Form(
+      key: _formKey,
+      child:  (_futureResponse == null) ? buildListView() : buildFutureBuilder(),
+    );
+  }
+}
+
+class Response {
+  final String status;
+
+  const Response({required this.status});
+
+  factory Response.fromJson(Map<String, dynamic> json) {
+    return Response(
+      status: json['status'],
+    );
   }
 }
