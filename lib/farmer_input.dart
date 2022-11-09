@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final storage = const FlutterSecureStorage();
 
-Future<Album> createAlbum(String nik,String name,String phone,String dob,String address,String startfarming,String fishtype,int numberofponds,String notes) async {
+Future<Response> insertFarmer(String nik,String name,String phone,String dob,String address,String startfarming,String fishtype,int numberofponds,String notes) async {
   var token = await storage.read(key: 'token');
   debugPrint('token : ' + token.toString());
   final response = await http.post(
@@ -31,7 +31,7 @@ Future<Album> createAlbum(String nik,String name,String phone,String dob,String 
   if (response.statusCode == 202) {
     // If the server did return a 201 CREATED response,
     // then parse the JSON.
-    return Album.fromJson(jsonDecode(response.body));
+    return Response.fromJson(jsonDecode(response.body));
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
@@ -74,14 +74,14 @@ class MyCustomFormState extends State<InputDataForm> {
   final TextEditingController _numberOfPondsController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
 
-  Future<Album>? _futureAlbum;
+  Future<Response>? _futureResponse;
 
-  FutureBuilder<Album> buildFutureBuilder() {
-    return FutureBuilder<Album>(
-      future: _futureAlbum,
+  FutureBuilder<Response> buildFutureBuilder() {
+    return FutureBuilder<Response>(
+      future: _futureResponse,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Text(snapshot.data!.title);
+          return Text(snapshot.data!.status);
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
         }
@@ -231,7 +231,7 @@ class MyCustomFormState extends State<InputDataForm> {
             ),
             onPressed: () {
               setState(() {
-                _futureAlbum = createAlbum(_nikController.text, _nameController.text, _phoneController.text, _dobController.text, _addressController.text, _startFarmingController.text, _fishTypeController.text, int.parse(_numberOfPondsController.text), _notesController.text);
+                _futureResponse = insertFarmer(_nikController.text, _nameController.text, _phoneController.text, _dobController.text, _addressController.text, _startFarmingController.text, _fishTypeController.text, int.parse(_numberOfPondsController.text), _notesController.text);
               });
             },
             child: Text(
@@ -252,21 +252,19 @@ class MyCustomFormState extends State<InputDataForm> {
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
-      child:  (_futureAlbum == null) ? buildListView() : buildFutureBuilder(),
+      child:  (_futureResponse == null) ? buildListView() : buildFutureBuilder(),
     );
   }
 }
 
-class Album {
-  final int id;
-  final String title;
+class Response {
+  final String status;
 
-  const Album({required this.id, required this.title});
+  const Response({required this.status});
 
-  factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(
-      id: json['id'],
-      title: json['title'],
+  factory Response.fromJson(Map<String, dynamic> json) {
+    return Response(
+      status: json['status'],
     );
   }
 }

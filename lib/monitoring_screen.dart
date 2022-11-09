@@ -18,137 +18,6 @@ class MonitoringScreen extends StatelessWidget {
   }
 }
 
-class ApprovalItem extends StatelessWidget {
-  const ApprovalItem({
-    super.key,
-    required this.approverid,
-    required this.pondid,
-    required this.nik,
-    required this.status,
-  });
-
-  final String approverid;
-  final String pondid;
-  final String nik;
-  final String status;
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: _ApprovalItem(
-              approverid: approverid,
-              pondid: pondid,
-              nik: nik,
-              status: status,
-            ),
-          ),
-          const Icon(
-            Icons.more_vert,
-            size: 16.0,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ApprovalItem extends StatelessWidget {
-  const _ApprovalItem({
-    required this.approverid,
-    required this.pondid,
-    required this.nik,
-    required this.status,
-  });
-
-  final String approverid;
-  final String pondid;
-  final String nik;
-  final String status;
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            approverid,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 14.0,
-            ),
-          ),
-          const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
-          Text(
-            pondid,
-            style: const TextStyle(fontSize: 10.0),
-          ),
-          const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
-          Text(
-            nik,
-            style: const TextStyle(fontSize: 10.0),
-          ),
-          const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
-          Text(
-            status,
-            style: const TextStyle(fontSize: 10.0),
-          )
-
-        ],
-      ),
-    );
-  }
-}
-
-class MyStatelessWidget extends StatelessWidget {
-  final String apiUrl = 'https://reqres.in/api/users?per_page=15';
-
-  Future<List<dynamic>> _fetchDataMonitorings() async {
-    var token = await storage.read(key: 'token');
-    debugPrint('token : ' + token.toString());
-    final response = await http.get(
-        Uri.parse('http://localhost:2021/experience'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer: ' + token.toString(),
-        }
-    );
-
-    return json.decode(response.body);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _fetchDataMonitorings();
-    return ListView(
-      padding: const EdgeInsets.all(8.0),
-      itemExtent: 106.0,
-      children: <ApprovalItem>[
-        ApprovalItem(
-          approverid: "1235",
-          pondid: "1",
-          nik: "12341515",
-          status: "Approved",
-        ),
-        ApprovalItem(
-          approverid: "1235",
-          pondid: "1",
-          nik: "12341515",
-          status: "Approved",
-        ),
-      ],
-    );
-  }
-}
-
 class MonitoringList extends StatelessWidget {
 
   Future<List<dynamic>> _fetchMonitoringsData() async {
@@ -206,10 +75,10 @@ class DetailScreen extends StatelessWidget {
   // Declare a field that holds the Todo.
   final String fundid;
 
-  Future<List<dynamic>> _fetchMonitoringData() async {
+  Future<List<dynamic>> _fetchPondData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/monitoring/' + this.fundid),
+        Uri.parse('http://localhost:2021/pond_fundid/' + this.fundid),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -229,7 +98,7 @@ class DetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Container(
           child: FutureBuilder<List<dynamic>>(
-            future: _fetchMonitoringData(),
+            future: _fetchPondData(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
@@ -239,8 +108,8 @@ class DetailScreen extends StatelessWidget {
                       return Card(
                         child: ListTile(
                           leading: FlutterLogo(),
-                          title: Text("Fund ID : " + snapshot.data[index]['fund_id']),
-                          subtitle: Text("Nik : " + snapshot.data[index]['nik'] + "\nNama : " + snapshot.data[index]['name'] + " \nTotal Panen : " + snapshot.data[index]['total_spawning'].toString() + " kg\nTipe Ikan : " + snapshot.data[index]['fish_type']),
+                          title: Text("Pond ID : " + snapshot.data[index]['pond_id']),
+                          subtitle: Text("Fund ID : " + snapshot.data[index]['fund_id'] + "\nTotal Panen : " + snapshot.data[index]['total_spawning'].toString() + " kg\nTipe Ikan : " + snapshot.data[index]['fish_type']),
                         ),
                       );
                     });
@@ -251,6 +120,29 @@ class DetailScreen extends StatelessWidget {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddMonitoring()));
+        },
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.add),
+      ),
     );
+  }
+}
+
+class AddMonitoring extends StatelessWidget {
+  const AddMonitoring({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Add Pond Id"),
+        ),
+        body: const Center(
+          child: Text('Hello World'),
+        ),
+      );
   }
 }
