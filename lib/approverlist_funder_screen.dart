@@ -173,7 +173,7 @@ class DetailScreen extends StatelessWidget {
   Future<List<dynamic>> _fecthExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/experience/' + this.nik),
+        Uri.parse('http://localhost:2021/funder/' + this.nik),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -203,8 +203,8 @@ class DetailScreen extends StatelessWidget {
                       return Card(
                         child: ListTile(
                           leading: FlutterLogo(),
-                          title: Text('Nik : ' + this.nik),
-                          subtitle: Text("Di submit oleh : " + snapshot.data[index]['Submitby'] + "\nStatus : " + snapshot.data[index]['Status'] + " \nTanggal : " + snapshot.data[index]['Timestamp'] + "\nJumlah Kolam : " + snapshot.data[index]['Numofponds'].toString() + "\nRerata panen : " + snapshot.data[index]['Spawningaverage'].toString() + "\nSkor Kredit : " + snapshot.data[index]['Creditscore'].toString() + "\n\n Tekan untuk melihat file url"),
+                          title: Text("Di setujui oleh : " + snapshot.data[index]['Funder']),
+                          subtitle: Text("Tanggal : " + snapshot.data[index]['Timestamp'] + "\nJumlah Kolam : " + snapshot.data[index]['Numofponds'].toString() + "\nJumlah Pemodalan : " + snapshot.data[index]['Amountoffund'].toString() + "\n\n Tekan untuk melihat file url"),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -226,7 +226,7 @@ class DetailScreen extends StatelessWidget {
       ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => FileInput()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => FileInput(nik: this.nik)));
           },
           backgroundColor: Colors.green,
           child: const Icon(Icons.add),
@@ -238,19 +238,32 @@ class DetailScreen extends StatelessWidget {
 
 class FileInput extends StatelessWidget {
 
+  // In the constructor, require a Todo.
+  const FileInput({super.key, required this.nik});
+
+  // Declare a field that holds the Todo.
+  final String nik;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Masukan jumlah pendanaan dalam (Rp)"),
+        title: Text("Form Pendanaan"),
       ),
-      body: FileInputForm(),
+      body: FileInputForm(nik: this.nik),
     );
   }
 }
 
 // Create a Form widget.
 class FileInputForm extends StatefulWidget {
+
+  // In the constructor, require a Todo.
+  const FileInputForm({super.key, required this.nik});
+
+  // Declare a field that holds the Todo.
+  final String nik;
+
   @override
   FileInputFormState createState() {
     return FileInputFormState();
@@ -262,20 +275,26 @@ class FileInputFormState extends State<FileInputForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _fishtypeController = TextEditingController();
+  final TextEditingController _numberofpondsController = TextEditingController();
+  final TextEditingController _amountoffundController = TextEditingController();
+
 
   Future<Response>? _futureResponse;
 
-  Future<Response> _insertFunder(String file) async {
+  Future<Response> _insertFunder(String fishtype, int numberofponds, int amountofpond) async {
     var token = await storage.read(key: 'token');
     final response = await http.post(
-      Uri.parse('http://localhost:2021/experience'),
+      Uri.parse('http://localhost:2021/funder'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer: ' + token.toString(),
       },
       body: jsonEncode(<String, dynamic>{
-        'file': file,
+        'nik': widget.nik,
+        'fish_type' : fishtype,
+        'number_of_ponds' : numberofponds,
+        'amount_of_fund' : amountofpond
       }),
     );
 
@@ -309,7 +328,35 @@ class FileInputFormState extends State<FileInputForm> {
     return ListView(
       children: <Widget>[
         TextFormField(
-          controller: _amountController,
+          controller: _fishtypeController,
+          decoration: const InputDecoration(
+            icon: const Icon(Icons.picture_as_pdf),
+            hintText: 'Dalam kg',
+            labelText: 'Berat',
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter some text';
+            }
+            return null;
+          },
+        ),
+        TextFormField(
+          controller: _numberofpondsController,
+          decoration: const InputDecoration(
+            icon: const Icon(Icons.picture_as_pdf),
+            hintText: 'Dalam kg',
+            labelText: 'Berat',
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter some text';
+            }
+            return null;
+          },
+        ),
+        TextFormField(
+          controller: _amountoffundController,
           decoration: const InputDecoration(
             icon: const Icon(Icons.picture_as_pdf),
             hintText: 'Dalam kg',
@@ -334,7 +381,7 @@ class FileInputFormState extends State<FileInputForm> {
             ),
             onPressed: () {
               setState(() {
-                _futureResponse = _insertFunder(_amountController.text);
+                _futureResponse = _insertFunder(_fishtypeController.text, int.parse(_numberofpondsController.text), int.parse(_amountoffundController.text));
               });
             },
             child: Text(

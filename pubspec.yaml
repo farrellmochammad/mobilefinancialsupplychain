@@ -73,7 +73,6 @@ flutter:
 
   assets:
     - assets/images/29072.png
-    - assets/sample.pdf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

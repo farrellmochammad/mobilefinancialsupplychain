@@ -51,7 +51,7 @@ class LoginScreen extends StatelessWidget {
     debugPrint('LoginData');
     return Future.delayed(loginTime).then((_) async {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:2021/login'),
+        Uri.parse('http://localhost:2021/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

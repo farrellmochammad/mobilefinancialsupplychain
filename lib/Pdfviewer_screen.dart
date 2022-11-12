@@ -37,23 +37,17 @@ class _PdfViewer extends State<PdfViewer> {
         child: FutureBuilder<PDFDocument>(
           future: loadDocument(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
-            return Center(
-              child: PDFViewer(
-                document: snapshot.data,
-                zoomSteps: 1,
-              ),
-            );
-            // if (snapshot.hasData) {
-            //   return Center(
-            //     child: PDFViewer(
-            //       document: snapshot.data,
-            //       zoomSteps: 1,
-            //     ),
-            //   );
-            // } else {
-            //   debugPrint("Has no data");
-            //   return Center(child: Text("Tidak bisa melihat file .pdf"));
-            // }
+            if (snapshot.hasData) {
+              return Center(
+                child: PDFViewer(
+                  document: snapshot.data,
+                  zoomSteps: 1,
+                ),
+              );
+            } else {
+              debugPrint("Has no data");
+              return Center(child: Text("Tidak bisa melihat file .pdf"));
+            }
           },
         ),
       ),
