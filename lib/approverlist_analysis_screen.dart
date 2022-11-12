@@ -184,7 +184,7 @@ class DetailScreen extends StatelessWidget {
     // Use the Todo to create the UI.
     return Scaffold(
       appBar: AppBar(
-        title: Text("Details of bla bla " + nik),
+        title: Text("Details of " + nik),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -214,7 +214,7 @@ class DetailScreen extends StatelessWidget {
       ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => FileInput()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => FileInput(nik: this.nik)));
           },
           backgroundColor: Colors.green,
           child: const Icon(Icons.add),
@@ -225,6 +225,11 @@ class DetailScreen extends StatelessWidget {
 }
 
 class FileInput extends StatelessWidget {
+  // In the constructor, require a Todo.
+  const FileInput({super.key, required this.nik});
+
+  // Declare a field that holds the Todo.
+  final String nik;
 
   @override
   Widget build(BuildContext context) {
@@ -232,13 +237,19 @@ class FileInput extends StatelessWidget {
       appBar: AppBar(
         title: Text("Insert pdf/doc url"),
       ),
-      body: FileInputForm(),
+      body: FileInputForm(nik: this.nik),
     );
   }
 }
 
 // Create a Form widget.
 class FileInputForm extends StatefulWidget {
+  // In the constructor, require a Todo.
+  const FileInputForm({super.key, required this.nik});
+
+  // Declare a field that holds the Todo.
+  final String nik;
+
   @override
   FileInputFormState createState() {
     return FileInputFormState();
@@ -253,17 +264,19 @@ class FileInputFormState extends State<FileInputForm> {
   final TextEditingController _fileController = TextEditingController();
 
   Future<Response>? _futureResponse;
+  String? nik;
 
-  Future<Response> _insertMonitoring(String file) async {
+  Future<Response> _uploadPdf(String file) async {
     var token = await storage.read(key: 'token');
-    final response = await http.post(
-      Uri.parse('http://localhost:2021/experience'),
+    final response = await http.put(
+      Uri.parse('http://localhost:2021/uploadfile'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer: ' + token.toString(),
       },
       body: jsonEncode(<String, dynamic>{
-        'file': file,
+        'file_url': file,
+        'nik' : widget.nik
       }),
     );
 
@@ -322,7 +335,7 @@ class FileInputFormState extends State<FileInputForm> {
             ),
             onPressed: () {
               setState(() {
-                _futureResponse = _insertMonitoring(_fileController.text);
+                _futureResponse = _uploadPdf(_fileController.text);
               });
             },
             child: Text(

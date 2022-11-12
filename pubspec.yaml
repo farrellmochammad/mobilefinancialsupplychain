@@ -39,6 +39,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_login: ^4.0.0
   flutter_secure_storage: ^6.0.0
+  # https://pub.dev/packages/printing
+  printing: ^5.4.3
+  advance_pdf_viewer: any
+
+  # https://pub.dev/packages/dio
+  dio: ^4.0.0
 
 dev_dependencies:
   flutter_test:

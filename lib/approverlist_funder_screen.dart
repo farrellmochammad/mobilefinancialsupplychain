@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'Pdfviewer_screen.dart';
+
 
 final storage = const FlutterSecureStorage();
 
@@ -143,7 +145,7 @@ class ApproverListView extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DetailScreen(nik: snapshot.data[index]['nik'], address: snapshot.data[index]['address']),
+                              builder: (context) => DetailScreen(nik: snapshot.data[index]['nik'], address: snapshot.data[index]['address'], urlfile: snapshot.data[index]['url_file']),
                             ),
                           );
                         },
@@ -161,11 +163,12 @@ class ApproverListView extends StatelessWidget {
 
 class DetailScreen extends StatelessWidget {
   // In the constructor, require a Todo.
-  const DetailScreen({super.key, required this.nik, required this.address});
+  const DetailScreen({super.key, required this.nik, required this.address, required this.urlfile});
 
   // Declare a field that holds the Todo.
   final String nik;
   final String address;
+  final String urlfile;
 
   Future<List<dynamic>> _fecthExperienceData() async {
     var token = await storage.read(key: 'token');
@@ -201,7 +204,15 @@ class DetailScreen extends StatelessWidget {
                         child: ListTile(
                           leading: FlutterLogo(),
                           title: Text('Nik : ' + this.nik),
-                          subtitle: Text("Di submit oleh : " + snapshot.data[index]['Submitby'] + "\nStatus : " + snapshot.data[index]['Status'] + " \nTanggal : " + snapshot.data[index]['Timestamp'] + "\nJumlah Kolam : " + snapshot.data[index]['Numofponds'].toString() + "\nRerata panen : " + snapshot.data[index]['Spawningaverage'].toString() + "\nSkor Kredit : " + snapshot.data[index]['Creditscore'].toString()),
+                          subtitle: Text("Di submit oleh : " + snapshot.data[index]['Submitby'] + "\nStatus : " + snapshot.data[index]['Status'] + " \nTanggal : " + snapshot.data[index]['Timestamp'] + "\nJumlah Kolam : " + snapshot.data[index]['Numofponds'].toString() + "\nRerata panen : " + snapshot.data[index]['Spawningaverage'].toString() + "\nSkor Kredit : " + snapshot.data[index]['Creditscore'].toString() + "\n\n Tekan untuk melihat file url"),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PdfViewer(),
+                              ),
+                            );
+                          },
                         ),
                       );
                     });
@@ -231,7 +242,7 @@ class FileInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Insert pdf/doc url"),
+        title: Text("Masukan jumlah pendanaan dalam (Rp)"),
       ),
       body: FileInputForm(),
     );
@@ -251,11 +262,11 @@ class FileInputFormState extends State<FileInputForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _fileController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
 
   Future<Response>? _futureResponse;
 
-  Future<Response> _insertMonitoring(String file) async {
+  Future<Response> _insertFunder(String file) async {
     var token = await storage.read(key: 'token');
     final response = await http.post(
       Uri.parse('http://localhost:2021/experience'),
@@ -298,7 +309,7 @@ class FileInputFormState extends State<FileInputForm> {
     return ListView(
       children: <Widget>[
         TextFormField(
-          controller: _fileController,
+          controller: _amountController,
           decoration: const InputDecoration(
             icon: const Icon(Icons.picture_as_pdf),
             hintText: 'Dalam kg',
@@ -323,7 +334,7 @@ class FileInputFormState extends State<FileInputForm> {
             ),
             onPressed: () {
               setState(() {
-                _futureResponse = _insertMonitoring(_fileController.text);
+                _futureResponse = _insertFunder(_amountController.text);
               });
             },
             child: Text(
