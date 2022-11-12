@@ -108,8 +108,8 @@ class DetailScreen extends StatelessWidget {
                       return Card(
                         child: ListTile(
                           leading: FlutterLogo(),
-                          title: Text("Pond ID : " + snapshot.data[index]['pond_id']),
-                          subtitle: Text("Fund ID : " + snapshot.data[index]['fund_id'] + "\nTotal Panen : " + snapshot.data[index]['total_spawning'].toString() + " kg\nTipe Ikan : " + snapshot.data[index]['fish_type']),
+                          title: Text("Fund ID : " + snapshot.data[index]['fund_id']),
+                          subtitle: Text("Total Panen : " + snapshot.data[index]['total_spawning'].toString() + " kg\nTipe Ikan : " + snapshot.data[index]['fish_type']),
                         ),
                       );
                     });
