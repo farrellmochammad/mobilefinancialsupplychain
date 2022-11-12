@@ -187,7 +187,7 @@ class DetailScreen extends StatelessWidget {
     // Use the Todo to create the UI.
     return Scaffold(
       appBar: AppBar(
-        title: Text("Details of bla bla " + nik),
+        title: Text("Details of nik " + nik),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -330,9 +330,9 @@ class FileInputFormState extends State<FileInputForm> {
         TextFormField(
           controller: _fishtypeController,
           decoration: const InputDecoration(
-            icon: const Icon(Icons.picture_as_pdf),
-            hintText: 'Dalam kg',
-            labelText: 'Berat',
+            icon: const Icon(Icons.add_card_sharp),
+            hintText: 'Contoh: Mujair, lele',
+            labelText: 'Tipe Ikan',
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -344,9 +344,9 @@ class FileInputFormState extends State<FileInputForm> {
         TextFormField(
           controller: _numberofpondsController,
           decoration: const InputDecoration(
-            icon: const Icon(Icons.picture_as_pdf),
-            hintText: 'Dalam kg',
-            labelText: 'Berat',
+            icon: const Icon(Icons.panorama_fish_eye),
+            hintText: 'Contoh: 2, 3',
+            labelText: 'Jumlah Kolam',
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -358,9 +358,9 @@ class FileInputFormState extends State<FileInputForm> {
         TextFormField(
           controller: _amountoffundController,
           decoration: const InputDecoration(
-            icon: const Icon(Icons.picture_as_pdf),
-            hintText: 'Dalam kg',
-            labelText: 'Berat',
+            icon: const Icon(Icons.money),
+            hintText: 'Dalam Rp',
+            labelText: 'Jumlah Pendanaan',
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {

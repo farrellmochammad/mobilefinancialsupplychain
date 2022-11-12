@@ -20,10 +20,10 @@ class MonitoringScreen extends StatelessWidget {
 
 class MonitoringList extends StatelessWidget {
 
-  Future<List<dynamic>> _fetchMonitoringsData() async {
+  Future<List<dynamic>> _fetchExprienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/monitorings'),
+        Uri.parse('http://localhost:2021/experiences'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -36,7 +36,7 @@ class MonitoringList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: FutureBuilder<List<dynamic>>(
-        future: _fetchMonitoringsData(),
+        future: _fetchExprienceData(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
@@ -46,13 +46,13 @@ class MonitoringList extends StatelessWidget {
                   return Card(
                     child: ListTile(
                       leading: FlutterLogo(),
-                      title: Text("Fund ID : " + snapshot.data[index]['fund_id']),
-                      subtitle: Text("Nik : " + snapshot.data[index]['nik'] + "\nNama : " + snapshot.data[index]['name'] + " \nTotal Panen : " + snapshot.data[index]['total_spawning'].toString() + " kg\nTipe Ikan : " + snapshot.data[index]['fish_type']),
+                      title: Text("Nik : " + snapshot.data[index]['nik']),
+                      subtitle: Text("Nama : " + snapshot.data[index]['name'] + " \nTotal Panen : " + snapshot.data[index]['total_spawning'].toString() + " kg\nTipe Ikan : " + snapshot.data[index]['fish_type']),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DetailScreen(fundid: snapshot.data[index]['fund_id']),
+                            builder: (context) => FunderDetailScreen(nik: snapshot.data[index]['nik']),
                           ),
                         );
                       },
@@ -68,17 +68,80 @@ class MonitoringList extends StatelessWidget {
   }
 }
 
-class DetailScreen extends StatelessWidget {
+
+class FunderDetailScreen extends StatelessWidget {
   // In the constructor, require a Todo.
-  const DetailScreen({super.key, required this.fundid});
+  const FunderDetailScreen({super.key, required this.nik});
+
+  // Declare a field that holds the Todo.
+  final String nik;
+
+  Future<List<dynamic>> _fecthFunderData() async {
+    var token = await storage.read(key: 'token');
+    var result = await http.get(
+        Uri.parse('http://localhost:2021/funder/' + this.nik),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer: ' + token.toString(),
+        }
+    );
+    return json.decode(result.body)['data'];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Use the Todo to create the UI.
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Details of nik " + nik),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Container(
+            child: FutureBuilder<List<dynamic>>(
+              future: _fecthFunderData(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                      padding: EdgeInsets.all(10),
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Card(
+                          child: ListTile(
+                            leading: FlutterLogo(),
+                            title: Text("Di setujui oleh : " + snapshot.data[index]['Funder']),
+                            subtitle: Text("Tanggal : " + snapshot.data[index]['Timestamp'] + "\nJumlah Kolam : " + snapshot.data[index]['Numofponds'].toString() + "\nJumlah Pemodalan : " + snapshot.data[index]['Amountoffund'].toString() + "\n\n Tekan untuk melihat file url"),
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => MonitoringDetailScreen(fundid: snapshot.data[index]['Fundid'])));
+                            },
+                          ),
+                        );
+                      });
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
+          ),
+
+        ),
+    );
+
+  }
+}
+
+class MonitoringDetailScreen extends StatelessWidget {
+  // In the constructor, require a Todo.
+  const MonitoringDetailScreen({super.key, required this.fundid});
 
   // Declare a field that holds the Todo.
   final String fundid;
 
-  Future<List<dynamic>> _fetchPondData() async {
+  Future<List<dynamic>> _fetchMonitoringData() async {
     var token = await storage.read(key: 'token');
+    debugPrint("Fund ID : " +  fundid);
     var result = await http.get(
-        Uri.parse('http://localhost:2021/pond_fundid/' + this.fundid),
+        Uri.parse('http://localhost:2021/monitoring_pond/' + this.fundid),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -92,13 +155,13 @@ class DetailScreen extends StatelessWidget {
     // Use the Todo to create the UI.
     return Scaffold(
       appBar: AppBar(
-        title: Text("Details of fundid " + fundid),
+        title: Text("Details of monitoring "),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
           child: FutureBuilder<List<dynamic>>(
-            future: _fetchPondData(),
+            future: _fetchMonitoringData(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
@@ -108,8 +171,8 @@ class DetailScreen extends StatelessWidget {
                       return Card(
                         child: ListTile(
                           leading: FlutterLogo(),
-                          title: Text("Fund ID : " + snapshot.data[index]['fund_id']),
-                          subtitle: Text("Total Panen : " + snapshot.data[index]['total_spawning'].toString() + " kg\nTipe Ikan : " + snapshot.data[index]['fish_type']),
+                          subtitle: Text("Tanggal : " + snapshot.data[index]['Timestamp'] + "\nBerat : " + snapshot.data[index]['Weight'].toString() + "\nTemperatur : " + snapshot.data[index]['Temperature'].toString() + "\Kelembapan : " + snapshot.data[index]['Humidity'].toString() +"\n\n Tekan untuk melihat file url"),
+
                         ),
                       );
                     });
@@ -122,39 +185,52 @@ class DetailScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => MonitoringInput()));
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => FileInput(fundid: this.fundid)));
         },
         backgroundColor: Colors.green,
         child: const Icon(Icons.add),
       ),
     );
+
   }
 }
 
+class FileInput extends StatelessWidget {
 
-class MonitoringInput extends StatelessWidget {
+  // In the constructor, require a Todo.
+  const FileInput({super.key, required this.fundid});
+
+  // Declare a field that holds the Todo.
+  final String fundid;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-          appBar: AppBar(
-            title: Text("Add monitoring"),
-          ),
-        body: MonitoringForm(),
-      );
+      appBar: AppBar(
+        title: Text("Form Pendanaan"),
+      ),
+      body: FileInputForm(fundid: this.fundid),
+    );
   }
 }
 
 // Create a Form widget.
-class MonitoringForm extends StatefulWidget {
+class FileInputForm extends StatefulWidget {
+
+  // In the constructor, require a Todo.
+  const FileInputForm({super.key, required this.fundid});
+
+  // Declare a field that holds the Todo.
+  final String fundid;
+
   @override
-  MonitoringFormState createState() {
-    return MonitoringFormState();
+  FileInputFormState createState() {
+    return FileInputFormState();
   }
 }
 
 // Create a corresponding State class, which holds data related to the form.
-class MonitoringFormState extends State<MonitoringForm> {
+class FileInputFormState extends State<FileInputForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   final _formKey = GlobalKey<FormState>();
@@ -162,20 +238,22 @@ class MonitoringFormState extends State<MonitoringForm> {
   final TextEditingController _temperatureController = TextEditingController();
   final TextEditingController _humidityController = TextEditingController();
 
+
   Future<Response>? _futureResponse;
 
-  Future<Response> _insertMonitoring(int weight,int temperature,int humidity) async {
+  Future<Response> _insertMonitoring(String fishtype, int numberofponds, int amountofpond) async {
     var token = await storage.read(key: 'token');
     final response = await http.post(
-      Uri.parse('http://localhost:2021/experience'),
+      Uri.parse('http://localhost:2021/monitoring_pond'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer: ' + token.toString(),
       },
       body: jsonEncode(<String, dynamic>{
-        'weight': weight,
-        'temperature': temperature,
-        'humidity': humidity,
+        'nik': widget.fundid,
+        'fish_type' : fishtype,
+        'number_of_ponds' : numberofponds,
+        'amount_of_fund' : amountofpond
       }),
     );
 
@@ -211,7 +289,7 @@ class MonitoringFormState extends State<MonitoringForm> {
         TextFormField(
           controller: _weightController,
           decoration: const InputDecoration(
-            icon: const Icon(Icons.monitor_weight_outlined),
+            icon: const Icon(Icons.scale),
             hintText: 'Dalam kg',
             labelText: 'Berat',
           ),
@@ -225,9 +303,9 @@ class MonitoringFormState extends State<MonitoringForm> {
         TextFormField(
           controller: _temperatureController,
           decoration: const InputDecoration(
-            icon: const Icon(Icons.severe_cold),
-            hintText: 'Dalam Celcius',
-            labelText: 'Suhu',
+            icon: const Icon(Icons.add_chart_rounded),
+            hintText: 'Dalam celcius',
+            labelText: 'Temperature',
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -239,13 +317,13 @@ class MonitoringFormState extends State<MonitoringForm> {
         TextFormField(
           controller: _humidityController,
           decoration: const InputDecoration(
-            icon: const Icon(Icons.add_box_rounded),
-            hintText: 'Dalam persen',
-            labelText: 'Tingkat Kelembapan',
+            icon: const Icon(Icons.picture_as_pdf),
+            hintText: 'Dalam RH',
+            labelText: 'Kelembapan',
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter valid phone number';
+              return 'Please enter some text';
             }
             return null;
           },
@@ -262,7 +340,7 @@ class MonitoringFormState extends State<MonitoringForm> {
             ),
             onPressed: () {
               setState(() {
-                _futureResponse = _insertMonitoring(int.parse(_weightController.text),int.parse(_temperatureController.text), int.parse(_humidityController.text));
+                _futureResponse = _insertMonitoring(_weightController.text, int.parse(_temperatureController.text), int.parse(_humidityController.text));
               });
             },
             child: Text(
