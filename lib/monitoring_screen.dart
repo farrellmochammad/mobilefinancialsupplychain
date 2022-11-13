@@ -110,7 +110,7 @@ class FunderDetailScreen extends StatelessWidget {
                           child: ListTile(
                             leading: FlutterLogo(),
                             title: Text("Di setujui oleh : " + snapshot.data[index]['Funder']),
-                            subtitle: Text("Tanggal : " + snapshot.data[index]['Timestamp'] + "\nJumlah Kolam : " + snapshot.data[index]['Numofponds'].toString() + "\nJumlah Pemodalan : " + snapshot.data[index]['Amountoffund'].toString() + "\n\n Tekan untuk melihat file url"),
+                            subtitle: Text("Tanggal : " + snapshot.data[index]['Timestamp'] + "\nJumlah Kolam : " + snapshot.data[index]['Numofponds'].toString() + "\nJumlah Pemodalan : " + snapshot.data[index]['Amountoffund'].toString() + "\n\n Tekan untuk melakukan input monitoring"),
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(builder: (context) => MonitoringDetailScreen(fundid: snapshot.data[index]['Fundid'])));
                             },
@@ -171,13 +171,13 @@ class MonitoringDetailScreen extends StatelessWidget {
                       return Card(
                         child: ListTile(
                           leading: FlutterLogo(),
-                          subtitle: Text("Tanggal : " + snapshot.data[index]['Timestamp'] + "\nBerat : " + snapshot.data[index]['Weight'].toString() + "\nTemperatur : " + snapshot.data[index]['Temperature'].toString() + "\Kelembapan : " + snapshot.data[index]['Humidity'].toString() +"\n\n Tekan untuk melihat file url"),
+                          subtitle: Text("Tanggal : " + snapshot.data[index]['Timestamp'] + "\nBerat : " + snapshot.data[index]['Weight'].toString() + "\nTemperatur : " + snapshot.data[index]['Temperature'].toString() + "\nKelembapan : " + snapshot.data[index]['Humidity'].toString()),
 
                         ),
                       );
                     });
               } else {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: Text("Belum ada data monitoring"));
               }
             },
           ),
@@ -241,7 +241,7 @@ class FileInputFormState extends State<FileInputForm> {
 
   Future<Response>? _futureResponse;
 
-  Future<Response> _insertMonitoring(String fishtype, int numberofponds, int amountofpond) async {
+  Future<Response> _insertMonitoring(int weight, int temperature, int humidity) async {
     var token = await storage.read(key: 'token');
     final response = await http.post(
       Uri.parse('http://localhost:2021/monitoring_pond'),
@@ -250,10 +250,10 @@ class FileInputFormState extends State<FileInputForm> {
         'Authorization': 'Bearer: ' + token.toString(),
       },
       body: jsonEncode(<String, dynamic>{
-        'nik': widget.fundid,
-        'fish_type' : fishtype,
-        'number_of_ponds' : numberofponds,
-        'amount_of_fund' : amountofpond
+        'fund_id': widget.fundid,
+        'weight' : weight,
+        'temperature' : temperature,
+        'humidity' : humidity
       }),
     );
 
@@ -340,7 +340,7 @@ class FileInputFormState extends State<FileInputForm> {
             ),
             onPressed: () {
               setState(() {
-                _futureResponse = _insertMonitoring(_weightController.text, int.parse(_temperatureController.text), int.parse(_humidityController.text));
+                _futureResponse = _insertMonitoring(int.parse(_weightController.text), int.parse(_temperatureController.text), int.parse(_humidityController.text));
               });
             },
             child: Text(
