@@ -204,7 +204,7 @@ class DetailScreen extends StatelessWidget {
                         child: ListTile(
                           leading: FlutterLogo(),
                           title: Text("Di setujui oleh : " + snapshot.data[index]['Funder']),
-                          subtitle: Text("Tanggal : " + snapshot.data[index]['Timestamp'] + "\nJumlah Kolam : " + snapshot.data[index]['Numofponds'].toString() + "\nJumlah Pemodalan : " + snapshot.data[index]['Amountoffund'].toString() + "\n\n Tekan untuk melihat file url"),
+                          subtitle: Text("Tanggal : " + snapshot.data[index]['Timestamp'] + "\nJumlah Kolam : " + snapshot.data[index]['Numberofponds'].toString() + "\nJumlah Pemodalan : " + snapshot.data[index]['Amountoffund'].toString() + "\n\n Tekan untuk melihat file url"),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -217,7 +217,7 @@ class DetailScreen extends StatelessWidget {
                       );
                     });
               } else {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: Text("Belum ada pendanaan"));
               }
             },
           ),
