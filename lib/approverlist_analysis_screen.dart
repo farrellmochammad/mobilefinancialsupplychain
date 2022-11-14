@@ -366,6 +366,10 @@ class Response {
 
   const Response({required this.status});
 
+  String getStatus(){
+    return this.status;
+  }
+
   factory Response.fromJson(Map<String, dynamic> json) {
     return Response(
       status: json['status'],
