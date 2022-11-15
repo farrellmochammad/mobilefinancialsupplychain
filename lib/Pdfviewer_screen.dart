@@ -16,7 +16,7 @@ class _PdfViewer extends State<PdfViewer> {
 
   Future<PDFDocument> loadDocument() async {
     PDFDocument document = await _fetchPdf();
-    debugPrint("Document length : " + document.count.toString());
+
     return document;
   }
 
@@ -45,7 +45,7 @@ class _PdfViewer extends State<PdfViewer> {
                 ),
               );
             } else {
-              debugPrint("Has no data");
+
               return Center(child: Text("Tidak bisa melihat file .pdf"));
             }
           },

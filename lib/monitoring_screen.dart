@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:ndialog/ndialog.dart';
+import 'Component/dialog.dart';
 
 
 final storage = const FlutterSecureStorage();
@@ -27,7 +27,7 @@ class MonitoringList extends StatelessWidget {
   Future<List<dynamic>> _fetchExprienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/experiences'),
+        Uri.parse('http://localhost:2021/funders'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -51,9 +51,9 @@ class MonitoringList extends StatelessWidget {
                     child: ListTile(
                       leading: FlutterLogo(),
                       title: Text("Nik : " + snapshot.data[index]['nik']),
-                      subtitle: Text("Nama : " + snapshot.data[index]['name'] +
-                          " \nTotal Panen : " + snapshot
-                          .data[index]['total_spawning'].toString() +
+                      subtitle: Text("Jumlah Kolam : " + snapshot.data[index]['number_of_ponds'] +
+                          " \nJumlah Pendanaan : " + snapshot
+                          .data[index]['amount_of_fund'].toString() +
                           " kg\nTipe Ikan : " +
                           snapshot.data[index]['fish_type']),
                       onTap: () {
@@ -70,7 +70,7 @@ class MonitoringList extends StatelessWidget {
                   );
                 });
           } else {
-            return Center(child: CircularProgressIndicator());
+            return Center(child: Text("Belum ada data petani yang di funding"));
           }
         },
       ),
@@ -177,7 +177,7 @@ class _DetailMonitoringScreen extends State<MonitoringDetailScreen> {
 
   Future<List<dynamic>> _fetchMonitoringData() async {
     var token = await storage.read(key: 'token');
-    debugPrint("Fund ID : " + widget.fundid);
+
     var result = await http.get(
         Uri.parse('http://localhost:2021/monitoring_pond/' + widget.fundid),
         headers: <String, String>{
@@ -319,57 +319,16 @@ class FileInputFormState extends State<FileInputForm> {
     }
   }
 
-  AlertDialog _createAlertDialog(String message){
-    return AlertDialog(
-      title: const Text('AlertDialog Title'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: <Widget>[
-            Text('${message}'),
-            Text('Would you like to approve of this message?'),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('Approve'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
-  }
-
   FutureBuilder<Response> buildFutureBuilder() {
     return FutureBuilder<Response>(
       future: _futureResponse ,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return _createAlertDialog(snapshot.data!.status);
-          // return AlertDialog(
-          //   title: const Text('AlertDialog Title'),
-          //   content: SingleChildScrollView(
-          //     child: ListBody(
-          //       children: const <Widget>[
-          //         Text(snapshot.data!.status),
-          //         Text('Would you like to approve of this message?'),
-          //       ],
-          //     ),
-          //   ),
-          //   actions: <Widget>[
-          //     TextButton(
-          //       child: const Text('Approve'),
-          //       onPressed: () {
-          //         Navigator.of(context).pop();
-          //       },
-          //     ),
-          //   ],
-          // );
+          return AlertComponent().CreateAlertDialog(context, snapshot.data!.status);
         }
 
         if (snapshot.hasError) {
-          return _createAlertDialog(snapshot.data!.status);
+          return AlertComponent().CreateAlertDialog(context, snapshot.error.toString());
         }
 
         return const CircularProgressIndicator();

@@ -18,7 +18,6 @@ class LoginScreen extends StatelessWidget {
   final storage = const FlutterSecureStorage();
 
   Future<String?> _authUser(LoginData data) {
-    debugPrint('Name: ${data.name}, Password: ${data.password}');
     return Future.delayed(loginTime).then((_) {
       if (!users.containsKey(data.name)) {
         return 'User not exists';
@@ -31,14 +30,13 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<String?> _signupUser(SignupData data) {
-    debugPrint('Signup Name: ${data.name}, Password: ${data.password}');
     return Future.delayed(loginTime).then((_) {
       return null;
     });
   }
 
   Future<String?> _recoverPassword(String name) {
-    debugPrint('Name: $name');
+
     return Future.delayed(loginTime).then((_) {
       if (!users.containsKey(name)) {
         return 'User not exists';
@@ -48,7 +46,6 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<String?> _login(LoginData data) async {
-    debugPrint('LoginData');
     return Future.delayed(loginTime).then((_) async {
       final response = await http.post(
         Uri.parse('http://localhost:2021/login'),
@@ -60,7 +57,7 @@ class LoginScreen extends StatelessWidget {
           'password': data.password
         }),
       );
-      debugPrint('LoginData');
+
       if (response.statusCode == 200) {
         // If the server did return a 201 CREATED response,
         // then parse the JSON.

@@ -3,12 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'Component/dialog.dart';
 
 final storage = const FlutterSecureStorage();
 
 Future<Response> insertFarmer(String nik,String name,String phone,String dob,String address,String startfarming,String fishtype,int numberofponds,String notes) async {
   var token = await storage.read(key: 'token');
-  debugPrint('token : ' + token.toString());
+
   final response = await http.post(
     Uri.parse('http://localhost:2021/experience'),
     headers: <String, String>{
@@ -80,9 +81,11 @@ class MyCustomFormState extends State<InputDataForm> {
       future: _futureResponse,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Text(snapshot.data!.status);
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
+          return AlertComponent().CreateAlertDialog(context, snapshot.data!.status);
+        }
+
+        if (snapshot.hasError) {
+          return AlertComponent().CreateAlertDialog(context, snapshot.error.toString());
         }
 
         return const CircularProgressIndicator();

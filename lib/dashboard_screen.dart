@@ -91,7 +91,6 @@ void main() {
 
   Future<String> getPermission() async {
     var permission =  await storage.read(key: 'permission');
-    debugPrint("Permission ## : " + permission.toString());
     return permission.toString();
   }
 

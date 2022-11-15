@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'Component/dialog.dart';
+
 final storage = const FlutterSecureStorage();
 
 class FundingList extends StatelessWidget {
@@ -284,9 +286,11 @@ class FileInputFormState extends State<FileInputForm> {
       future: _futureResponse,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Text(snapshot.data!.status);
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
+          return AlertComponent().CreateAlertDialog(context, snapshot.data!.status);
+        }
+
+        if (snapshot.hasError) {
+          return AlertComponent().CreateAlertDialog(context, snapshot.error.toString());
         }
 
         return const CircularProgressIndicator();

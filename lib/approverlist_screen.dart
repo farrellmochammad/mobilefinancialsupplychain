@@ -113,7 +113,7 @@ class MyStatelessWidget extends StatelessWidget {
 
   Future<List<dynamic>> _fetchDataUsers() async {
     var token = await storage.read(key: 'token');
-    debugPrint('token : ' + token.toString());
+
     final response = await http.get(
       Uri.parse('http://localhost:2021/experience'),
       headers: <String, String>{
@@ -191,7 +191,7 @@ class ApproverListView extends StatelessWidget {
                     );
                   });
             } else {
-              return Center(child: CircularProgressIndicator());
+              return Center(child: Text('Belum ada data petani'));
             }
           },
         ),
@@ -245,7 +245,7 @@ class DetailScreen extends StatelessWidget {
                       );
                     });
               } else {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: Text(''));
               }
             },
           ),
