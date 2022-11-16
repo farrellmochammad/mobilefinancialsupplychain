@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
+import 'Component/dialog.dart';
+import 'Component/appbar.dart';
 
 
 class PdfViewer extends StatefulWidget {
@@ -30,9 +32,7 @@ class _PdfViewer extends State<PdfViewer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('FlutterPluginPDFViewer'),
-      ),
+      appBar: AppBarComponent.CreateAppBar("Halaman melihat pdf "),
       body: Center(
         child: FutureBuilder<PDFDocument>(
           future: loadDocument(),

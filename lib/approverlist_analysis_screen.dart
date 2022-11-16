@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'Component/dialog.dart';
+import 'Component/appbar.dart';
 
 final storage = const FlutterSecureStorage();
 
@@ -185,11 +186,8 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Details of " + nik),
-        backgroundColor: const Color(0xFF009688),
-      ),
-      body: Padding(
+        appBar: AppBarComponent.CreateAppBar("Details of nik " + nik),
+        body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
           child: FutureBuilder<List<dynamic>>(
@@ -237,10 +235,7 @@ class FileInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Insert pdf/doc url"),
-        backgroundColor: const Color(0xFF009688),
-      ),
+      appBar: AppBarComponent.CreateAppBar("masukan url dari pdf"),
       body: FileInputForm(nik: this.nik),
     );
   }

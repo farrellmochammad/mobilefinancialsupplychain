@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Component/dialog.dart';
+import 'Component/appbar.dart';
 
 final storage = const FlutterSecureStorage();
 
@@ -44,12 +45,10 @@ class FarmerInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
+      appBar: AppBarComponent.CreateAppBar("Form Input Petani "),
         body: InputDataForm(),
-      ),
-    );
+      );
   }
 }
 // Create a Form widget.

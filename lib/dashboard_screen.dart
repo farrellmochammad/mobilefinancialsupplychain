@@ -7,6 +7,7 @@ import 'approverlist_screen.dart';
 import 'approverlist_analysis_screen.dart';
 import 'monitoring_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'Component/appbar.dart';
 
 final storage = const FlutterSecureStorage();
 
@@ -22,12 +23,11 @@ void main() {
 
   DefaultTabController _buildSalesPage(){
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.person_pin)),
               Tab(icon: Icon(Icons.check)),
               Tab(icon: Icon(Icons.directions_car)),
             ],
@@ -37,7 +37,6 @@ void main() {
         ),
         body: TabBarView(
           children: [
-            FarmerInput(),
             ApproverList(),
             MonitoringScreen(),
           ],
@@ -50,15 +49,8 @@ void main() {
     return DefaultTabController(
       length: 1,
       child: Scaffold(
-        appBar: AppBar(
-          bottom: TabBar(
-            tabs: [
-              Tab(icon: Icon(Icons.person_pin)),
-            ],
-          ),
-          title: Text('Analysis Page'),
-        ),
-        backgroundColor: const Color(0xFF009688),
+       appBar: AppBarComponent.CreateAppBar("Halaman Analyst "),
+      backgroundColor: const Color(0xFF009688),
         body: TabBarView(
           children: [
             ApproverListAnalysis(),

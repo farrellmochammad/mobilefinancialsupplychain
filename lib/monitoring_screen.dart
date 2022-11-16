@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Component/dialog.dart';
+import 'Component/appbar.dart';
 
 
 final storage = const FlutterSecureStorage();
@@ -51,10 +52,10 @@ class MonitoringList extends StatelessWidget {
                     child: ListTile(
                       leading: FlutterLogo(),
                       title: Text("Nik : " + snapshot.data[index]['nik']),
-                      subtitle: Text("Jumlah Kolam : " + snapshot.data[index]['number_of_ponds'] +
-                          " \nJumlah Pendanaan : " + snapshot
+                      subtitle: Text("Jumlah Kolam : " + snapshot.data[index]['number_of_ponds'].toString() +
+                          " \nJumlah Pendanaan : Rp " + snapshot
                           .data[index]['amount_of_fund'].toString() +
-                          " kg\nTipe Ikan : " +
+                          " \nTipe Ikan : " +
                           snapshot.data[index]['fish_type']),
                       onTap: () {
                         Navigator.push(
@@ -102,10 +103,7 @@ class FunderDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Details of nik " + nik),
-        backgroundColor: const Color(0xFF009688),
-      ),
+      appBar: AppBarComponent.CreateAppBar("Details of " + nik),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
@@ -197,10 +195,7 @@ class _DetailMonitoringScreen extends State<MonitoringDetailScreen> {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Details of monitoring "),
-        backgroundColor: const Color(0xFF009688),
-      ),
+      appBar: AppBarComponent.CreateAppBar("Monitoring Detil"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
@@ -258,10 +253,7 @@ class FileInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Form Pendanaan"),
-        backgroundColor: const Color(0xFF009688),
-      ),
+      appBar: AppBarComponent.CreateAppBar("Form Pendanaan "),
       body: FileInputForm(fundid: this.fundid),
     );
   }

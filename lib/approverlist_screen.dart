@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'farmer_input.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'Component/appbar.dart';
 
 final storage = const FlutterSecureStorage();
 
@@ -13,6 +15,14 @@ class ApproverList extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: ApproverListView(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => FarmerInput()));
+          },
+          backgroundColor: Colors.green,
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
@@ -195,6 +205,7 @@ class ApproverListView extends StatelessWidget {
             }
           },
         ),
+
       );
   }
 }
@@ -223,10 +234,7 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Details of " + nik),
-        backgroundColor: const Color(0xFF009688),
-      ),
+      appBar: AppBarComponent.CreateAppBar("Details of " + nik),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(

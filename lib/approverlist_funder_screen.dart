@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Pdfviewer_screen.dart';
+import 'Component/appbar.dart';
 
 
 final storage = const FlutterSecureStorage();
@@ -186,10 +187,7 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Details of nik " + nik),
-        backgroundColor: const Color(0xFF009688),
-      ),
+      appBar: AppBarComponent.CreateAppBar("Details of nik " + nik),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
@@ -248,10 +246,7 @@ class FileInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Form Pendanaan"),
-        backgroundColor: const Color(0xFF009688),
-      ),
+      appBar: AppBarComponent.CreateAppBar("Form Pendanaan"),
       body: FileInputForm(nik: this.nik),
     );
   }
