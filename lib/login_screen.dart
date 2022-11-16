@@ -36,7 +36,6 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<String?> _recoverPassword(String name) {
-
     return Future.delayed(loginTime).then((_) {
       if (!users.containsKey(name)) {
         return 'User not exists';
@@ -52,17 +51,15 @@ class LoginScreen extends StatelessWidget {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, String>{
-          'username': data.name,
-          'password': data.password
-        }),
+        body: jsonEncode(
+            <String, String>{'username': data.name, 'password': data.password}),
       );
 
       if (response.statusCode == 200) {
         // If the server did return a 201 CREATED response,
         // then parse the JSON.
         LoginPayload payload = LoginPayload.fromJson(jsonDecode(response.body));
-        if (payload.token == null){
+        if (payload.token == null) {
           return 'User not exists';
         }
         await storage.write(key: 'token', value: payload.token);
@@ -71,18 +68,15 @@ class LoginScreen extends StatelessWidget {
         // If the server did not return a 201 CREATED response,
         // then throw an exception.
         return 'There are networking problem';
-
       }
       return null;
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
-      title: 'ECORP',
-      logo: AssetImage('assets/images/29072.png'),
+      logo: AssetImage('assets/images/efishery.png'),
       onLogin: _login,
       onSignup: _signupUser,
       onSubmitAnimationCompleted: () {
@@ -91,6 +85,22 @@ class LoginScreen extends StatelessWidget {
         ));
       },
       onRecoverPassword: _recoverPassword,
+      theme: LoginTheme(
+        primaryColor: Colors.teal,
+        accentColor: Colors.teal,
+        titleStyle: TextStyle(
+          color: Colors.greenAccent,
+          fontFamily: 'Quicksand',
+          letterSpacing: 4,
+        ),
+        buttonStyle: TextStyle(
+          color: Colors.white,
+        ),
+        inputTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.teal.withOpacity(.1),
+        ),
+      ),
     );
   }
 }
@@ -102,11 +112,6 @@ class LoginPayload {
   const LoginPayload({required this.token, required this.permission});
 
   factory LoginPayload.fromJson(Map<String, dynamic> json) {
-    return LoginPayload(
-      token: json['token'],
-      permission: json['permission']
-    );
+    return LoginPayload(token: json['token'], permission: json['permission']);
   }
-
-
 }

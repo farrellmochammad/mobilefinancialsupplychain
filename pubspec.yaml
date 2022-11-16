@@ -74,6 +74,7 @@ flutter:
 
   assets:
     - assets/images/29072.png
+    - assets/images/efishery.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

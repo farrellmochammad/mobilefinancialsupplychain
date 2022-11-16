@@ -104,6 +104,7 @@ class FunderDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Details of nik " + nik),
+        backgroundColor: const Color(0xFF009688),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -198,6 +199,7 @@ class _DetailMonitoringScreen extends State<MonitoringDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Details of monitoring "),
+        backgroundColor: const Color(0xFF009688),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -258,6 +260,7 @@ class FileInput extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Form Pendanaan"),
+        backgroundColor: const Color(0xFF009688),
       ),
       body: FileInputForm(fundid: this.fundid),
     );

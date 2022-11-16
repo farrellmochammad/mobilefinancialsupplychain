@@ -187,6 +187,7 @@ class DetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Details of " + nik),
+        backgroundColor: const Color(0xFF009688),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -238,6 +239,7 @@ class FileInput extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Insert pdf/doc url"),
+        backgroundColor: const Color(0xFF009688),
       ),
       body: FileInputForm(nik: this.nik),
     );

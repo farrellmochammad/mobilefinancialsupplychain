@@ -32,6 +32,7 @@ void main() {
               Tab(icon: Icon(Icons.directions_car)),
             ],
           ),
+          backgroundColor: const Color(0xFF009688),
           title: Text('Sales Page'),
         ),
         body: TabBarView(
@@ -57,6 +58,7 @@ void main() {
           ),
           title: Text('Analysis Page'),
         ),
+        backgroundColor: const Color(0xFF009688),
         body: TabBarView(
           children: [
             ApproverListAnalysis(),
@@ -77,6 +79,7 @@ void main() {
               Tab(icon: Icon(Icons.person_pin)),
             ],
           ),
+          backgroundColor: const Color(0xFF009688),
           title: Text('Funder Page'),
         ),
         body: TabBarView(

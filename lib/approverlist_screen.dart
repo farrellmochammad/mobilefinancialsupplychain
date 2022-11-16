@@ -225,6 +225,7 @@ class DetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Details of " + nik),
+        backgroundColor: const Color(0xFF009688),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
