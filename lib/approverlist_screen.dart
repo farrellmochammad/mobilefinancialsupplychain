@@ -4,11 +4,11 @@ import 'farmer_input.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Component/appbar.dart';
+import 'farmer_update.dart';
 
 final storage = const FlutterSecureStorage();
 
 class ApproverList extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,8 +17,8 @@ class ApproverList extends StatelessWidget {
         body: ApproverListView(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => FarmerInput()));
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => FarmerInput()));
           },
           backgroundColor: Colors.green,
           child: const Icon(Icons.add),
@@ -41,7 +41,6 @@ class ApprovalItem extends StatelessWidget {
   final String pondid;
   final String nik;
   final String status;
-
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +80,6 @@ class _ApprovalItem extends StatelessWidget {
   final String nik;
   final String status;
 
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -111,112 +109,96 @@ class _ApprovalItem extends StatelessWidget {
             status,
             style: const TextStyle(fontSize: 10.0),
           )
-
         ],
       ),
     );
   }
 }
 
-class MyStatelessWidget extends StatelessWidget {
-  final String apiUrl = 'https://reqres.in/api/users?per_page=15';
-
-  Future<List<dynamic>> _fetchDataUsers() async {
-    var token = await storage.read(key: 'token');
-
-    final response = await http.get(
-      Uri.parse('http://localhost:2021/experience'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer: ' + token.toString(),
-      }
-    );
-
-    return json.decode(response.body);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _fetchDataUsers();
-    return ListView(
-      padding: const EdgeInsets.all(8.0),
-      itemExtent: 106.0,
-      children: <ApprovalItem>[
-        ApprovalItem(
-            approverid: "1235",
-            pondid: "1",
-            nik: "12341515",
-            status: "Approved",
-        ),
-        ApprovalItem(
-          approverid: "1235",
-          pondid: "1",
-          nik: "12341515",
-          status: "Approved",
-        ),
-      ],
-    );
-  }
-}
-
 class ApproverListView extends StatelessWidget {
-
   Future<List<dynamic>> _fecthExperiencesData() async {
     var token = await storage.read(key: 'token');
-    var result = await http.get(
-        Uri.parse('http://localhost:2021/experiences'),
+    var result = await http.get(Uri.parse('http://localhost:2021/experiences'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
-        }
-    );
+        });
     return json.decode(result.body)['data'];
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: FutureBuilder<List<dynamic>>(
-          future: _fecthExperiencesData(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  padding: EdgeInsets.all(10),
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: ListTile(
-                        leading: FlutterLogo(),
-                        title: Text('Nik : ' + snapshot.data[index]['nik']),
-                        subtitle: Text("Nama : " + snapshot.data[index]['name'] + " \nAlamat : " + snapshot.data[index]['address'] + "\nStatus : " + snapshot.data[index]['current_status']),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailScreen(nik: snapshot.data[index]['nik'], address: snapshot.data[index]['address']),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  });
-            } else {
-              return Center(child: Text('Belum ada data petani'));
-            }
-          },
-        ),
-
-      );
+      child: FutureBuilder<List<dynamic>>(
+        future: _fecthExperiencesData(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+                padding: EdgeInsets.all(10),
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    child: ListTile(
+                      leading: FlutterLogo(),
+                      title: Text('Nik : ' + snapshot.data[index]['nik']),
+                      subtitle: Text("Nama : " +
+                          snapshot.data[index]['name'] +
+                          " \nAlamat : " +
+                          snapshot.data[index]['address'] +
+                          "\nStatus : " +
+                          snapshot.data[index]['current_status']),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailScreen(
+                                nik: snapshot.data[index]['nik'],
+                                name: snapshot.data[index]['name'],
+                                phone: snapshot.data[index]['phone'],
+                                dob: snapshot.data[index]['dob'],
+                                address: snapshot.data[index]['address'],
+                                startfarming: snapshot.data[index]['start_farming'],
+                                fishtype: snapshot.data[index]['fish_type'],
+                                numberofponds: snapshot.data[index]['number_of_ponds'].toString(),
+                                notes: snapshot.data[index]['notes']
+                          ),
+                        ));
+                      }
+                    ),
+                  );
+                });
+          } else {
+            return Center(child: Text('Belum ada data petani'));
+          }
+        },
+      ),
+    );
   }
 }
 
 class DetailScreen extends StatelessWidget {
   // In the constructor, require a Todo.
-  const DetailScreen({super.key, required this.nik, required this.address});
+  const DetailScreen({super.key,
+    required this.nik,
+    required this.name,
+    required this.phone,
+    required this.dob,
+    required this.address,
+    required this.startfarming,
+    required this.fishtype,
+    required this.numberofponds,
+    required this.notes});
 
   // Declare a field that holds the Todo.
   final String nik;
+  final String name;
+  final String phone;
+  final String dob;
   final String address;
+  final String startfarming;
+  final String fishtype;
+  final String numberofponds;
+  final String notes;
 
   Future<List<dynamic>> _fecthExperienceData() async {
     var token = await storage.read(key: 'token');
@@ -225,8 +207,7 @@ class DetailScreen extends StatelessWidget {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
-        }
-    );
+        });
     return json.decode(result.body)['data'];
   }
 
@@ -249,7 +230,19 @@ class DetailScreen extends StatelessWidget {
                       return Card(
                         child: ListTile(
                           title: Text('Nik : ' + this.nik),
-                          subtitle: Text("Di submit oleh : " + snapshot.data[index]['Submitby'] + "\nStatus : " + snapshot.data[index]['Status'] + " \nTanggal : " + snapshot.data[index]['Timestamp'] + "\nJumlah Kolam : " + snapshot.data[index]['Numofponds'].toString() + "\nRerata panen : " + snapshot.data[index]['Spawningaverage'].toString() + "\nSkor Kredit : " + snapshot.data[index]['Creditscore'].toString()),
+                          subtitle: Text("Di submit oleh : " +
+                              snapshot.data[index]['Submitby'] +
+                              "\nStatus : " +
+                              snapshot.data[index]['Status'] +
+                              " \nTanggal : " +
+                              snapshot.data[index]['Timestamp'] +
+                              "\nJumlah Kolam : " +
+                              snapshot.data[index]['Numofponds'].toString() +
+                              "\nRerata panen : " +
+                              snapshot.data[index]['Spawningaverage']
+                                  .toString() +
+                              "\nSkor Kredit : " +
+                              snapshot.data[index]['Creditscore'].toString()),
                         ),
                       );
                     });
@@ -259,6 +252,25 @@ class DetailScreen extends StatelessWidget {
             },
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => FarmerUpdate(
+              nik: this.nik,
+              name: this.name,
+              phone: this.phone,
+              dob: this.dob,
+              address: this.address,
+              startfarming: this.startfarming,
+              fishtype: this.fishtype,
+              numberofponds: this.numberofponds,
+              notes: this.notes
+          ),
+          ));
+        },
+        label: const Text('Update Data'),
+        icon: const Icon(Icons.person_pin),
+        backgroundColor: Colors.teal,
       ),
     );
   }

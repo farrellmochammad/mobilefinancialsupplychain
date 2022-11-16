@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:supplychainmobile/approverlist_funder_screen.dart';
 import 'package:supplychainmobile/funding_funder_screen.dart';
-import 'farmer_input.dart';
 import 'approverlist_screen.dart';
 import 'approverlist_analysis_screen.dart';
 import 'monitoring_screen.dart';
