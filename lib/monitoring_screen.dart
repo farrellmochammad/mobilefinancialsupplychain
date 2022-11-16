@@ -52,7 +52,8 @@ class MonitoringList extends StatelessWidget {
                     child: ListTile(
                       leading: FlutterLogo(),
                       title: Text("Nik : " + snapshot.data[index]['nik']),
-                      subtitle: Text("Jumlah Kolam : " + snapshot.data[index]['number_of_ponds'].toString() +
+                      subtitle: Text("Jumlah Kolam : " + snapshot
+                          .data[index]['number_of_ponds'].toString() +
                           " \nJumlah Pendanaan : Rp " + snapshot
                           .data[index]['amount_of_fund'].toString() +
                           " \nTipe Ikan : " +
@@ -213,12 +214,7 @@ class _DetailMonitoringScreen extends State<MonitoringDetailScreen> {
                           subtitle: Text(
                               "Tanggal : " + snapshot.data[index]['Timestamp'] +
                                   "\nBerat : " +
-                                  snapshot.data[index]['Weight'].toString() +
-                                  "\nTemperatur : " +
-                                  snapshot.data[index]['Temperature']
-                                      .toString() + "\nKelembapan : " +
-                                  snapshot.data[index]['Humidity'].toString()),
-
+                                  snapshot.data[index]['Weight'].toString()),
                         ),
                       );
                     });
@@ -233,7 +229,7 @@ class _DetailMonitoringScreen extends State<MonitoringDetailScreen> {
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => FileInput(fundid: widget.fundid)))
-          .then((value) => null);
+              .then((value) => null);
         },
         backgroundColor: Colors.green,
         child: const Icon(Icons.add),
@@ -280,14 +276,11 @@ class FileInputFormState extends State<FileInputForm> {
   // and allows validation of the form.
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _weightController = TextEditingController();
-  final TextEditingController _temperatureController = TextEditingController();
-  final TextEditingController _humidityController = TextEditingController();
 
 
   Future<Response>? _futureResponse;
 
-  Future<Response> _insertMonitoring(int weight, int temperature,
-      int humidity) async {
+  Future<Response> _insertMonitoring(int weight) async {
     var token = await storage.read(key: 'token');
     final response = await http.post(
       Uri.parse('http://localhost:2021/monitoring_pond'),
@@ -298,8 +291,6 @@ class FileInputFormState extends State<FileInputForm> {
       body: jsonEncode(<String, dynamic>{
         'fund_id': widget.fundid,
         'weight': weight,
-        'temperature': temperature,
-        'humidity': humidity
       }),
     );
 
@@ -316,14 +307,16 @@ class FileInputFormState extends State<FileInputForm> {
 
   FutureBuilder<Response> buildFutureBuilder() {
     return FutureBuilder<Response>(
-      future: _futureResponse ,
+      future: _futureResponse,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return AlertComponent().CreateAlertDialog(context, snapshot.data!.status);
+          return AlertComponent().CreateAlertDialog(
+              context, snapshot.data!.status);
         }
 
         if (snapshot.hasError) {
-          return AlertComponent().CreateAlertDialog(context, snapshot.error.toString());
+          return AlertComponent().CreateAlertDialog(
+              context, snapshot.error.toString());
         }
 
         return const CircularProgressIndicator();
@@ -348,34 +341,7 @@ class FileInputFormState extends State<FileInputForm> {
             return null;
           },
         ),
-        TextFormField(
-          controller: _temperatureController,
-          decoration: const InputDecoration(
-            icon: const Icon(Icons.add_chart_rounded),
-            hintText: 'Dalam celcius',
-            labelText: 'Temperature',
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter some text';
-            }
-            return null;
-          },
-        ),
-        TextFormField(
-          controller: _humidityController,
-          decoration: const InputDecoration(
-            icon: const Icon(Icons.picture_as_pdf),
-            hintText: 'Dalam RH',
-            labelText: 'Kelembapan',
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter some text';
-            }
-            return null;
-          },
-        ),
+
         Container(
           width: 200,
           height: 45,
@@ -389,9 +355,7 @@ class FileInputFormState extends State<FileInputForm> {
             onPressed: () {
               setState(() {
                 _futureResponse = _insertMonitoring(
-                    int.parse(_weightController.text),
-                    int.parse(_temperatureController.text),
-                    int.parse(_humidityController.text));
+                    int.parse(_weightController.text));
               });
             },
             child: Text(
@@ -422,9 +386,10 @@ class Response {
 
   Response({required this.status});
 
-  String getResponseStatus(){
+  String getResponseStatus() {
     return this.status;
   }
+
   factory Response.fromJson(Map<String, dynamic> json) {
     return Response(
       status: json['status'],
