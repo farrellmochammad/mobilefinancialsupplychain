@@ -11,7 +11,7 @@ final storage = const FlutterSecureStorage();
 Future<Response> insertFarmer(String nik,String name,String phone,String dob,String address,String startfarming,String fishtype,int numberofponds,String notes) async {
   var token = await storage.read(key: 'token');
 
-  final response = await http.post(
+  final response = await http.put(
     Uri.parse('http://localhost:2021/experience'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
