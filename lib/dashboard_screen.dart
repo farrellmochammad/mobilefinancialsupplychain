@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:supplychainmobile/approverlist_funder_screen.dart';
 import 'package:supplychainmobile/funding_funder_screen.dart';
+import 'package:supplychainmobile/signedlist_funder_screen.dart';
+import 'package:supplychainmobile/signedlist_sales_screen.dart';
 import 'approverlist_screen.dart';
 import 'approverlist_analysis_screen.dart';
 import 'monitoring_screen.dart';
@@ -22,13 +24,14 @@ void main() {
 
   DefaultTabController _buildSalesPage(){
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           bottom: TabBar(
             tabs: [
               Tab(icon: Icon(Icons.check)),
               Tab(icon: Icon(Icons.directions_car)),
+              Tab(icon: Icon(Icons.sign_language_outlined)),
             ],
           ),
           backgroundColor: const Color(0xFF009688),
@@ -38,6 +41,7 @@ void main() {
           children: [
             ApproverList(),
             MonitoringScreen(),
+            SignedListSales()
           ],
         ),
       ),
@@ -67,7 +71,7 @@ void main() {
           bottom: TabBar(
             tabs: [
               Tab(icon: Icon(Icons.person_pin)),
-              Tab(icon: Icon(Icons.person_pin)),
+              Tab(icon: Icon(Icons.sign_language_outlined)),
             ],
           ),
           backgroundColor: const Color(0xFF009688),
@@ -76,7 +80,7 @@ void main() {
         body: TabBarView(
           children: [
             ApproverListFunder(),
-            FundingList()
+            SignedListFunder()
           ],
         ),
       ),

@@ -25,7 +25,7 @@ class MonitoringScreen extends StatelessWidget {
 
 class MonitoringList extends StatelessWidget {
 
-  Future<List<dynamic>> _fetchExprienceData() async {
+  Future<List<dynamic>> _fetchFundersData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
         Uri.parse('http://localhost:2021/funders'),
@@ -41,7 +41,7 @@ class MonitoringList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: FutureBuilder<List<dynamic>>(
-        future: _fetchExprienceData(),
+        future: _fetchFundersData(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
