@@ -91,7 +91,11 @@ class ViewSigned extends StatelessWidget {
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
         });
-    return json.decode(result.body)['data']['sign_url'];
+    if (result.statusCode != 200) {
+      return "";
+    } else {
+      return json.decode(result.body)['data']['sign_url'];
+    }
   }
 
 
@@ -103,8 +107,18 @@ class ViewSigned extends StatelessWidget {
           child: FutureBuilder<String>(
               future: _fetchImageUrl(),
               builder: (context, AsyncSnapshot<String> snapshot) {
-                return Image.network(snapshot.data.toString());
-              }
+                if (snapshot.hasData){
+                  if (snapshot.data!.isEmpty){
+                    return Center(child: Text("Cannot render Image"));
+                  }
+
+                  if (snapshot.data!.isNotEmpty){
+                    return Image.network(snapshot.data.toString());
+                  }
+                }
+
+                return Center(child: Text("Canot Render Image"));
+              },
           ),
         ),
       );
