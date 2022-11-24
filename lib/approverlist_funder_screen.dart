@@ -5,11 +5,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Pdfviewer_screen.dart';
 import 'Component/appbar.dart';
 
-
 final storage = const FlutterSecureStorage();
 
 class ApproverListFunder extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -34,7 +32,6 @@ class ApprovalItem extends StatelessWidget {
   final String pondid;
   final String nik;
   final String status;
-
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +71,6 @@ class _ApprovalItem extends StatelessWidget {
   final String nik;
   final String status;
 
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -104,67 +100,74 @@ class _ApprovalItem extends StatelessWidget {
             status,
             style: const TextStyle(fontSize: 10.0),
           )
-
         ],
       ),
     );
   }
 }
 
-
 class ApproverListView extends StatelessWidget {
-
   Future<List<dynamic>> _fecthExperiencesData() async {
     var token = await storage.read(key: 'token');
-    var result = await http.get(
-        Uri.parse('http://localhost:2021/experiences'),
+    var result = await http.get(Uri.parse('http://localhost:2021/experiences'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
-        }
-    );
+        });
     return json.decode(result.body)['data'];
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: FutureBuilder<List<dynamic>>(
-          future: _fecthExperiencesData(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  padding: EdgeInsets.all(10),
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: ListTile(
-                        leading: FlutterLogo(),
-                        title: Text('Nik : ' + snapshot.data[index]['nik']),
-                        subtitle: Text("Nama : " + snapshot.data[index]['name'] + " \nAlamat : " + snapshot.data[index]['address'] + "\nStatus : " + snapshot.data[index]['current_status']),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailScreen(nik: snapshot.data[index]['nik'], address: snapshot.data[index]['address'], urlfile: snapshot.data[index]['url_file']),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  });
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
-      );
+      child: FutureBuilder<List<dynamic>>(
+        future: _fecthExperiencesData(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+                padding: EdgeInsets.all(10),
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    child: ListTile(
+                      leading: FlutterLogo(),
+                      title: Text('Nik : ' + snapshot.data[index]['nik']),
+                      subtitle: Text("Nama : " +
+                          snapshot.data[index]['name'] +
+                          " \nAlamat : " +
+                          snapshot.data[index]['address'] +
+                          "\nStatus : " +
+                          snapshot.data[index]['current_status']),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailScreen(
+                                nik: snapshot.data[index]['nik'],
+                                address: snapshot.data[index]['address'],
+                                urlfile: snapshot.data[index]['url_file']),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                });
+          } else {
+            return Center(child: Text('Belum ada data petani masuk'));
+          }
+        },
+      ),
+    );
   }
 }
 
 class DetailScreen extends StatelessWidget {
   // In the constructor, require a Todo.
-  const DetailScreen({super.key, required this.nik, required this.address, required this.urlfile});
+  const DetailScreen(
+      {super.key,
+      required this.nik,
+      required this.address,
+      required this.urlfile});
 
   // Declare a field that holds the Todo.
   final String nik;
@@ -174,12 +177,11 @@ class DetailScreen extends StatelessWidget {
   Future<List<dynamic>> _fecthExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/funder/' + this.nik),
+        Uri.parse('http://localhost:2021/funder_nik/' + this.nik),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
-        }
-    );
+        });
     return json.decode(result.body)['data'];
   }
 
@@ -187,111 +189,101 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Details of nik " + nik),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-          child: FutureBuilder<List<dynamic>>(
-            future: _fecthExperienceData(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                return ListView.builder(
-                    padding: EdgeInsets.all(10),
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        child: ListTile(
-                          leading: FlutterLogo(),
-                          title: Text("Di setujui oleh : " + snapshot.data[index]['Funder']),
-                          subtitle: Text("Tanggal : " + snapshot.data[index]['Timestamp'] + "\nJumlah Kolam : " + snapshot.data[index]['Numberofponds'].toString() + "\nJumlah Pemodalan : " + snapshot.data[index]['Amountoffund'].toString() + "\n\n Tekan untuk melihat file url"),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PdfViewer(),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    });
-              } else {
-                return Center(child: Text("Belum ada pendanaan"));
-              }
-            },
+        appBar: AppBarComponent.CreateAppBar("Details of nik " + nik),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Container(
+            child: FutureBuilder<List<dynamic>>(
+              future: _fecthExperienceData(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                      padding: EdgeInsets.all(10),
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Card(
+                          child: ListTile(
+                            title: Text('Nik : ' + this.nik),
+                            subtitle: Text("Disubmit oleh : " +
+                                snapshot.data[index]['submitted_by'] +
+                                "\nWaktu submit : " +
+                                snapshot.data[index]['submitted_timestamp'] +
+                                "\nJenis Ikan : " +
+                                snapshot.data[index]['fish_type'].toString() +
+                                "\nJumlah Kolam : " +
+                                snapshot.data[index]['number_of_ponds']
+                                    .toString() +
+                                "\nJumlah Pendanaan : " +
+                                snapshot.data[index]['amount_of_fund']
+                                    .toString()),
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => FundInput(fundid:  snapshot.data[index]['fund_id'])));
+                            },
+                          ),
+                        );
+                      });
+                } else {
+                  return Center(child: Text("Belum ada pendanaan"));
+                }
+              },
+            ),
           ),
         ),
-
-      ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => FileInput(nik: this.nik)));
-          },
-          backgroundColor: Colors.green,
-          child: const Icon(Icons.add),
-        )
-    );
-
+       );
   }
 }
 
-class FileInput extends StatelessWidget {
-
+class FundInput extends StatelessWidget {
   // In the constructor, require a Todo.
-  const FileInput({super.key, required this.nik});
+  const FundInput({super.key, required this.fundid});
 
   // Declare a field that holds the Todo.
-  final String nik;
+  final String fundid;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarComponent.CreateAppBar("Form Pendanaan"),
-      body: FileInputForm(nik: this.nik),
+      body: FundInputForm(fundid: this.fundid),
     );
   }
 }
 
 // Create a Form widget.
-class FileInputForm extends StatefulWidget {
-
+class FundInputForm extends StatefulWidget {
   // In the constructor, require a Todo.
-  const FileInputForm({super.key, required this.nik});
+  const FundInputForm({super.key, required this.fundid});
 
   // Declare a field that holds the Todo.
-  final String nik;
+  final String fundid;
 
   @override
-  FileInputFormState createState() {
-    return FileInputFormState();
+  AmountInputFormState createState() {
+    return AmountInputFormState();
   }
 }
 
 // Create a corresponding State class, which holds data related to the form.
-class FileInputFormState extends State<FileInputForm> {
+class AmountInputFormState extends State<FundInputForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _fishtypeController = TextEditingController();
-  final TextEditingController _numberofpondsController = TextEditingController();
-  final TextEditingController _amountoffundController = TextEditingController();
-
+  final TextEditingController _fundController = TextEditingController();
 
   Future<Response>? _futureResponse;
 
-  Future<Response> _insertFunder(String fishtype, int numberofponds, int amountofpond) async {
+  Future<Response> _insertFunder( int amountoffund) async {
     var token = await storage.read(key: 'token');
-    final response = await http.post(
-      Uri.parse('http://localhost:2021/funder'),
+    final response = await http.put(
+      Uri.parse('http://localhost:2021/insertfunder'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer: ' + token.toString(),
       },
       body: jsonEncode(<String, dynamic>{
-        'nik': widget.nik,
-        'fish_type' : fishtype,
-        'number_of_ponds' : numberofponds,
-        'amount_of_fund' : amountofpond
+        'fund_id': widget.fundid,
+        'amount_of_fund' : amountoffund
       }),
     );
 
@@ -321,43 +313,15 @@ class FileInputFormState extends State<FileInputForm> {
     );
   }
 
-  ListView buildListView(){
+  ListView buildListView() {
     return ListView(
       children: <Widget>[
         TextFormField(
-          controller: _fishtypeController,
+          controller: _fundController,
           decoration: const InputDecoration(
             icon: const Icon(Icons.add_card_sharp),
-            hintText: 'Contoh: Mujair, lele',
-            labelText: 'Tipe Ikan',
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter some text';
-            }
-            return null;
-          },
-        ),
-        TextFormField(
-          controller: _numberofpondsController,
-          decoration: const InputDecoration(
-            icon: const Icon(Icons.panorama_fish_eye),
-            hintText: 'Contoh: 2, 3',
-            labelText: 'Jumlah Kolam',
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter some text';
-            }
-            return null;
-          },
-        ),
-        TextFormField(
-          controller: _amountoffundController,
-          decoration: const InputDecoration(
-            icon: const Icon(Icons.money),
             hintText: 'Dalam Rp',
-            labelText: 'Jumlah Pendanaan',
+            labelText: 'Masukan Jumlah Pendanaan',
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -378,7 +342,9 @@ class FileInputFormState extends State<FileInputForm> {
             ),
             onPressed: () {
               setState(() {
-                _futureResponse = _insertFunder(_fishtypeController.text, int.parse(_numberofpondsController.text), int.parse(_amountoffundController.text));
+                _futureResponse = _insertFunder(
+                    int.parse(_fundController.text)
+                    );
               });
             },
             child: Text(
@@ -393,13 +359,12 @@ class FileInputFormState extends State<FileInputForm> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
-      child:  (_futureResponse == null) ? buildListView() : buildFutureBuilder(),
+      child: (_futureResponse == null) ? buildListView() : buildFutureBuilder(),
     );
   }
 }

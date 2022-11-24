@@ -9,7 +9,6 @@ import 'Component/appbar.dart';
 final storage = const FlutterSecureStorage();
 
 class ApproverListAnalysis extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -34,7 +33,6 @@ class ApprovalItem extends StatelessWidget {
   final String pondid;
   final String nik;
   final String status;
-
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +72,6 @@ class _ApprovalItem extends StatelessWidget {
   final String nik;
   final String status;
 
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -104,61 +101,63 @@ class _ApprovalItem extends StatelessWidget {
             status,
             style: const TextStyle(fontSize: 10.0),
           )
-
         ],
       ),
     );
   }
 }
 
-
 class ApproverListView extends StatelessWidget {
-
   Future<List<dynamic>> _fecthExperiencesData() async {
     var token = await storage.read(key: 'token');
-    var result = await http.get(
-        Uri.parse('http://localhost:2021/experiences'),
+    var result = await http.get(Uri.parse('http://localhost:2021/experiences'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
-        }
-    );
+        });
     return json.decode(result.body)['data'];
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: FutureBuilder<List<dynamic>>(
-          future: _fecthExperiencesData(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  padding: EdgeInsets.all(10),
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: ListTile(
-                        leading: FlutterLogo(),
-                        title: Text('Nik : ' + snapshot.data[index]['nik']),
-                        subtitle: Text("Nama : " + snapshot.data[index]['name'] + " \nAlamat : " + snapshot.data[index]['address'] + "\nStatus : " + snapshot.data[index]['current_status']),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailScreen(nik: snapshot.data[index]['nik'], address: snapshot.data[index]['address']),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  });
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
-      );
+      child: FutureBuilder<List<dynamic>>(
+        future: _fecthExperiencesData(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+                padding: EdgeInsets.all(10),
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    child: ListTile(
+                      leading: FlutterLogo(),
+                      title: Text('Nik : ' + snapshot.data[index]['nik']),
+                      subtitle: Text("Nama : " +
+                          snapshot.data[index]['name'] +
+                          " \nAlamat : " +
+                          snapshot.data[index]['address'] +
+                          "\nStatus : " +
+                          snapshot.data[index]['current_status']),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailScreen(
+                                nik: snapshot.data[index]['nik'],
+                                address: snapshot.data[index]['address']),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                });
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );
   }
 }
 
@@ -173,12 +172,11 @@ class DetailScreen extends StatelessWidget {
   Future<List<dynamic>> _fecthExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/experience/' + this.nik),
+        Uri.parse('http://localhost:2021/funder_nik/' + this.nik),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
-        }
-    );
+        });
     return json.decode(result.body)['data'];
   }
 
@@ -188,55 +186,66 @@ class DetailScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBarComponent.CreateAppBar("Details of nik " + nik),
         body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-          child: FutureBuilder<List<dynamic>>(
-            future: _fecthExperienceData(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                return ListView.builder(
-                    padding: EdgeInsets.all(10),
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        child: ListTile(
-                          title: Text('Nik : ' + this.nik),
-                          subtitle: Text("Di submit oleh : " + snapshot.data[index]['Submitby'] + "\nStatus : " + snapshot.data[index]['Status'] + " \nTanggal : " + snapshot.data[index]['Timestamp'] + "\nJumlah Kolam : " + snapshot.data[index]['Numofponds'].toString() + "\nRerata panen : " + snapshot.data[index]['Spawningaverage'].toString() + "\nSkor Kredit : " + snapshot.data[index]['Creditscore'].toString()),
-                        ),
-                      );
-                    });
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            },
+          padding: const EdgeInsets.all(16.0),
+          child: Container(
+            child: FutureBuilder<List<dynamic>>(
+              future: _fecthExperienceData(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                      padding: EdgeInsets.all(10),
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Card(
+                          child: ListTile(
+                            title: Text('Nik : ' + this.nik),
+                            subtitle: Text("Disubmit oleh : " +
+                                snapshot.data[index]['submitted_by'] +
+                                "\nWaktu submit : " +
+                                snapshot.data[index]['submitted_timestamp'] +
+                                "\nJenis Ikan : " +
+                                snapshot.data[index]['fish_type'].toString() +
+                                "\nJumlah Kolam : " +
+                                snapshot.data[index]['number_of_ponds']
+                                    .toString() +
+                                "\nJumlah Pendanaan : " +
+                                snapshot.data[index]['amount_of_fund']
+                                    .toString()),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        FileInput(fundid:  snapshot.data[index]['fund_id']),
+                                  ),
+                                );
+                              }
+                          ),
+                        );
+                      });
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
           ),
         ),
-
-      ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => FileInput(nik: this.nik)));
-          },
-          backgroundColor: Colors.green,
-          child: const Icon(Icons.add),
-        )
     );
-
   }
 }
 
 class FileInput extends StatelessWidget {
   // In the constructor, require a Todo.
-  const FileInput({super.key, required this.nik});
+  const FileInput({super.key, required this.fundid});
 
   // Declare a field that holds the Todo.
-  final String nik;
+  final String fundid;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarComponent.CreateAppBar("masukan url dari pdf"),
-      body: FileInputForm(nik: this.nik),
+      body: FileInputForm(fundid: this.fundid),
     );
   }
 }
@@ -244,10 +253,10 @@ class FileInput extends StatelessWidget {
 // Create a Form widget.
 class FileInputForm extends StatefulWidget {
   // In the constructor, require a Todo.
-  const FileInputForm({super.key, required this.nik});
+  const FileInputForm({super.key, required this.fundid});
 
   // Declare a field that holds the Todo.
-  final String nik;
+  final String fundid;
 
   @override
   FileInputFormState createState() {
@@ -268,15 +277,12 @@ class FileInputFormState extends State<FileInputForm> {
   Future<Response> _uploadPdf(String file) async {
     var token = await storage.read(key: 'token');
     final response = await http.put(
-      Uri.parse('http://localhost:2021/uploadfile'),
+      Uri.parse('http://localhost:2021/uploadfilefunder'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer: ' + token.toString(),
       },
-      body: jsonEncode(<String, dynamic>{
-        'file_url': file,
-        'nik' : widget.nik
-      }),
+      body: jsonEncode(<String, dynamic>{'file_url': file, 'fund_id': widget.fundid}),
     );
 
     if (response.statusCode == 202) {
@@ -295,9 +301,11 @@ class FileInputFormState extends State<FileInputForm> {
       future: _futureResponse,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return AlertComponent().CreateAlertDialog(context, snapshot.data!.status);
+          return AlertComponent()
+              .CreateAlertDialog(context, snapshot.data!.status);
         } else if (snapshot.hasError) {
-          return AlertComponent().CreateAlertDialog(context, snapshot.error.toString());
+          return AlertComponent()
+              .CreateAlertDialog(context, snapshot.error.toString());
         }
 
         return const CircularProgressIndicator();
@@ -305,7 +313,7 @@ class FileInputFormState extends State<FileInputForm> {
     );
   }
 
-  ListView buildListView(){
+  ListView buildListView() {
     return ListView(
       children: <Widget>[
         TextFormField(
@@ -349,13 +357,12 @@ class FileInputFormState extends State<FileInputForm> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
-      child:  (_futureResponse == null) ? buildListView() : buildFutureBuilder(),
+      child: (_futureResponse == null) ? buildListView() : buildFutureBuilder(),
     );
   }
 }
@@ -365,7 +372,7 @@ class Response {
 
   const Response({required this.status});
 
-  String getStatus(){
+  String getStatus() {
     return this.status;
   }
 
