@@ -91,7 +91,7 @@ class FunderDetailScreen extends StatelessWidget {
   Future<List<dynamic>> _fecthFunderData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/funder/' + this.nik),
+        Uri.parse('http://localhost:2021/funder_nik/' + this.nik),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -104,7 +104,7 @@ class FunderDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Details of " + nik),
+      appBar: AppBarComponent.CreateAppBar("Details funder "),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
@@ -118,33 +118,37 @@ class FunderDetailScreen extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
                         child: ListTile(
-                          leading: FlutterLogo(),
-                          title: Text("Di setujui oleh : " +
-                              snapshot.data[index]['Funder']),
-                          subtitle: Text(
-                              "Tanggal : " + snapshot.data[index]['Timestamp'] +
-                                  "\nJumlah Kolam : " +
-                                  snapshot.data[index]['Numofponds']
-                                      .toString() + "\nJumlah Pemodalan : " +
-                                  snapshot.data[index]['Amountoffund']
-                                      .toString() +
-                                  "\n\n Tekan untuk melakukan input monitoring"),
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    MonitoringDetailScreen(fundid: snapshot
-                                        .data[index]['Fundid'])));
-                          },
+                            title: Text('Nik : ' + this.nik),
+                            subtitle: Text("Disubmit oleh : " +
+                                snapshot.data[index]['submitted_by'] +
+                                "\nWaktu submit : " +
+                                snapshot.data[index]['submitted_timestamp'] +
+                                "\nJenis Ikan : " +
+                                snapshot.data[index]['fish_type'].toString() +
+                                "\nJumlah Kolam : " +
+                                snapshot.data[index]['number_of_ponds']
+                                    .toString() +
+                                "\nJumlah Pendanaan : " +
+                                snapshot.data[index]['amount_of_fund']
+                                    .toString()),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      MonitoringDetailScreen(fundid:  snapshot.data[index]['fund_id']),
+                                ),
+                              );
+                            }
                         ),
                       );
                     });
               } else {
-                return Center(child: Text("Tidak ada data monitoring"));
+                return Center(child: CircularProgressIndicator());
               }
             },
           ),
         ),
-
       ),
     );
   }
