@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Component/dialog.dart';
 import 'Component/appbar.dart';
+import 'package:intl/intl.dart';
+
 
 final storage = const FlutterSecureStorage();
 
@@ -165,18 +167,31 @@ class MyCustomFormState extends State<InputDataForm> {
             return null;
           },
         ),
-        TextFormField(
+        TextField(
           controller: _startFarmingController,
           decoration: const InputDecoration(
             icon: const Icon(Icons.area_chart),
             hintText: 'Input mulai budi daya ikan',
             labelText: 'Input mulai budi daya ikan',
           ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter valid date';
-            }
-            return null;
+          readOnly: true,
+          //set it true, so that user will not able to edit text
+          onTap: () async {
+            DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1950),
+                //DateTime.now() - not to allow to choose before today.
+                lastDate: DateTime(2100));
+
+            if (pickedDate != null) {
+              String formattedDate =
+              DateFormat('yyyy-MM-dd').format(pickedDate);
+              setState(() {
+                _startFarmingController.text =
+                    formattedDate; //set output date to TextField value.
+              });
+            } else {}
           },
         ),
         TextFormField(
