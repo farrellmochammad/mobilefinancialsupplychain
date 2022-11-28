@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Pdfviewer_screen.dart';
 import 'Component/appbar.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 final storage = const FlutterSecureStorage();
 
@@ -218,7 +219,7 @@ class DetailScreen extends StatelessWidget {
                                     .toString()),
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => FundInput(fundid:  snapshot.data[index]['fund_id'])));
+                                  builder: (context) => DetailScreenApprovedList(fundid:  snapshot.data[index]['fund_id'])));
                             },
                           ),
                         );
@@ -231,6 +232,111 @@ class DetailScreen extends StatelessWidget {
           ),
         ),
        );
+  }
+}
+
+
+class DetailScreenApprovedList extends StatelessWidget {
+  // In the constructor, require a Todo.
+  const DetailScreenApprovedList({super.key, required this.fundid});
+
+  // Declare a field that holds the Todo.
+  final String fundid;
+
+  Future<List<dynamic>> _fecthExperienceData() async {
+    var token = await storage.read(key: 'token');
+    var result = await http.get(
+        Uri.parse('http://localhost:2021/experience_fund/' + this.fundid),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer: ' + token.toString(),
+        });
+    return json.decode(result.body)['data'];
+  }
+
+  Widget _getRadialGauge(double creditscore) {
+    debugPrint("Credit score : " + creditscore.toString());
+    return SfRadialGauge(
+      axes:<RadialAxis>[
+        RadialAxis(showLabels: false, showAxisLine: false, showTicks: false,
+            minimum: 0, maximum: 300,
+            ranges: <GaugeRange>[GaugeRange(startValue: 0, endValue: 100,
+                color: Color(0xFFFE2A25), label: 'Rendah',
+                sizeUnit: GaugeSizeUnit.factor,
+                labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize:  20),
+                startWidth: 0.65, endWidth: 0.65
+            ),GaugeRange(startValue: 100, endValue: 200,
+              color:Color(0xFFFFBA00), label: 'Sedang',
+              labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize:   20),
+              startWidth: 0.65, endWidth: 0.65, sizeUnit: GaugeSizeUnit.factor,
+            ),
+              GaugeRange(startValue: 200, endValue: 300,
+                color:Color(0xFF00AB47), label: 'Tinggi',
+                labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize:   20),
+                sizeUnit: GaugeSizeUnit.factor,
+                startWidth: 0.65, endWidth: 0.65,
+              ),
+
+            ],
+            pointers: <GaugePointer>[NeedlePointer(value: creditscore
+            )]
+        )
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Use the Todo to create the UI.
+    return Scaffold(
+      appBar: AppBarComponent.CreateAppBar("Detail of fund"),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Container(
+          child: FutureBuilder<List<dynamic>>(
+            future: _fecthExperienceData(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    padding: EdgeInsets.all(10),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: Column(
+                          children: <Widget>[
+                            Card(
+                              child: ListTile(
+                                title: Text('Fund ID : ' + this.fundid),
+                                subtitle: Text("Disubmit oleh : " +
+                                    snapshot.data[index]['Submitby'] +
+                                    "\nWaktu submit : " +
+                                    snapshot.data[index]['Timestamp'] +
+                                    "\nJumlah Kolam : " +
+                                    snapshot.data[index]['Numofponds']
+                                        .toString() +
+                                    "\nKredit skor : " +
+                                    snapshot.data[index]['Creditscore']
+                                        .toString()),
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => FundInput(fundid: this.fundid)));
+                                },
+                              ),
+                            ),
+                            _getRadialGauge( snapshot.data[index]['Creditscore'])],
+                        ),
+                      );
+                    });
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        ),
+      ),
+    );
   }
 }
 

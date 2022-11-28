@@ -8,6 +8,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'farmer_update.dart';
 import 'Component/dialog.dart';
 import 'Component/appbar.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 final storage = const FlutterSecureStorage();
 
@@ -345,11 +346,42 @@ class DetailScreenApprovedList extends StatelessWidget {
     return json.decode(result.body)['data'];
   }
 
+  Widget _getRadialGauge(double creditscore) {
+    debugPrint("Credit score : " + creditscore.toString());
+    return SfRadialGauge(
+      axes:<RadialAxis>[
+        RadialAxis(showLabels: false, showAxisLine: false, showTicks: false,
+            minimum: 0, maximum: 300,
+            ranges: <GaugeRange>[GaugeRange(startValue: 0, endValue: 100,
+                color: Color(0xFFFE2A25), label: 'Rendah',
+                sizeUnit: GaugeSizeUnit.factor,
+                labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize:  20),
+                startWidth: 0.65, endWidth: 0.65
+            ),GaugeRange(startValue: 100, endValue: 200,
+              color:Color(0xFFFFBA00), label: 'Sedang',
+              labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize:   20),
+              startWidth: 0.65, endWidth: 0.65, sizeUnit: GaugeSizeUnit.factor,
+            ),
+              GaugeRange(startValue: 200, endValue: 300,
+                color:Color(0xFF00AB47), label: 'Tinggi',
+                labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize:   20),
+                sizeUnit: GaugeSizeUnit.factor,
+                startWidth: 0.65, endWidth: 0.65,
+              ),
+
+            ],
+            pointers: <GaugePointer>[NeedlePointer(value: creditscore
+            )]
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Details of nik " + fundid),
+      appBar: AppBarComponent.CreateAppBar("Detail of fund"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
@@ -361,19 +393,28 @@ class DetailScreenApprovedList extends StatelessWidget {
                     padding: EdgeInsets.all(10),
                     itemCount: snapshot.data.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        child: ListTile(
-                            title: Text('Fund ID : ' + this.fundid),
-                            subtitle: Text("Disubmit oleh : " +
-                                snapshot.data[index]['Submitby'] +
-                                "\nWaktu submit : " +
-                                snapshot.data[index]['Timestamp'] +
-                                "\nJumlah Kolam : " +
-                                snapshot.data[index]['Numofponds']
-                                    .toString() +
-                                "\nKredit skor : " +
-                                snapshot.data[index]['Creditscore']
-                                    .toString()),
+                      return  Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: Column(
+                          children: <Widget>[
+                            Card(
+                            child: ListTile(
+                              title: Text('Fund ID : ' + this.fundid),
+                              subtitle: Text("Disubmit oleh : " +
+                                  snapshot.data[index]['Submitby'] +
+                                  "\nWaktu submit : " +
+                                  snapshot.data[index]['Timestamp'] +
+                                  "\nJumlah Kolam : " +
+                                  snapshot.data[index]['Numofponds']
+                                      .toString() +
+                                  "\nKredit skor : " +
+                                  snapshot.data[index]['Creditscore']
+                                      .toString()),
+
+                            ),
+                          ),
+                          _getRadialGauge( snapshot.data[index]['Creditscore'])],
                         ),
                       );
                     });
