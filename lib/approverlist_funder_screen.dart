@@ -108,13 +108,16 @@ class _ApprovalItem extends StatelessWidget {
 }
 
 class ApproverListView extends StatelessWidget {
-  Future<List<dynamic>> _fecthExperiencesData() async {
+
+  Future<List<dynamic>> _fetchFundersData() async {
     var token = await storage.read(key: 'token');
-    var result = await http.get(Uri.parse('http://localhost:2021/experiences'),
+    var result = await http.get(
+        Uri.parse('http://localhost:2021/funders_funder'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
-        });
+        }
+    );
     return json.decode(result.body)['data'];
   }
 
@@ -122,7 +125,7 @@ class ApproverListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: FutureBuilder<List<dynamic>>(
-        future: _fecthExperiencesData(),
+        future: _fetchFundersData(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
@@ -132,21 +135,20 @@ class ApproverListView extends StatelessWidget {
                   return Card(
                     child: ListTile(
                       leading: FlutterLogo(),
-                      title: Text('Nik : ' + snapshot.data[index]['nik']),
-                      subtitle: Text("Nama : " +
-                          snapshot.data[index]['name'] +
-                          " \nAlamat : " +
-                          snapshot.data[index]['address'] +
-                          "\nStatus : " +
-                          snapshot.data[index]['current_status']),
+                      title: Text("Nik : " + snapshot.data[index]['nik']),
+                      subtitle: Text("Jumlah Kolam : " + snapshot
+                          .data[index]['number_of_ponds'].toString() +
+                          " \nJumlah Pendanaan : Rp " + snapshot
+                          .data[index]['amount_of_fund'].toString() +
+                          " \nTipe Ikan : " +
+                          snapshot.data[index]['fish_type']),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DetailScreen(
-                                nik: snapshot.data[index]['nik'],
-                                address: snapshot.data[index]['address'],
-                                urlfile: snapshot.data[index]['url_file']),
+                            builder: (context) =>
+                                FunderDetailScreen(
+                                    nik: snapshot.data[index]['nik']),
                           ),
                         );
                       },
@@ -154,7 +156,7 @@ class ApproverListView extends StatelessWidget {
                   );
                 });
           } else {
-            return Center(child: Text('Belum ada data petani masuk'));
+            return Center(child: Text("Belum ada data petani yang di funding"));
           }
         },
       ),
@@ -162,27 +164,22 @@ class ApproverListView extends StatelessWidget {
   }
 }
 
-class DetailScreen extends StatelessWidget {
+class FunderDetailScreen extends StatelessWidget {
   // In the constructor, require a Todo.
-  const DetailScreen(
-      {super.key,
-      required this.nik,
-      required this.address,
-      required this.urlfile});
+  const FunderDetailScreen({super.key, required this.nik});
 
   // Declare a field that holds the Todo.
   final String nik;
-  final String address;
-  final String urlfile;
 
-  Future<List<dynamic>> _fecthExperienceData() async {
+  Future<List<dynamic>> _fecthFunderData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
         Uri.parse('http://localhost:2021/funder_nik/' + this.nik),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
-        });
+        }
+    );
     return json.decode(result.body)['data'];
   }
 
@@ -190,20 +187,20 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-        appBar: AppBarComponent.CreateAppBar("Details of nik " + nik),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Container(
-            child: FutureBuilder<List<dynamic>>(
-              future: _fecthExperienceData(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return ListView.builder(
-                      padding: EdgeInsets.all(10),
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: ListTile(
+      appBar: AppBarComponent.CreateAppBar("Details funder "),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Container(
+          child: FutureBuilder<List<dynamic>>(
+            future: _fecthFunderData(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    padding: EdgeInsets.all(10),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Card(
+                        child: ListTile(
                             title: Text('Nik : ' + this.nik),
                             subtitle: Text("Disubmit oleh : " +
                                 snapshot.data[index]['submitted_by'] +
@@ -218,23 +215,27 @@ class DetailScreen extends StatelessWidget {
                                 snapshot.data[index]['amount_of_fund']
                                     .toString()),
                             onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => DetailScreenApprovedList(fundid:  snapshot.data[index]['fund_id'])));
-                            },
-                          ),
-                        );
-                      });
-                } else {
-                  return Center(child: Text("Belum ada pendanaan"));
-                }
-              },
-            ),
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      DetailScreenApprovedList(fundid:  snapshot.data[index]['fund_id']),
+                                ),
+                              );
+                            }
+                        ),
+                      );
+                    });
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
           ),
         ),
-       );
+      ),
+    );
   }
 }
-
 
 class DetailScreenApprovedList extends StatelessWidget {
   // In the constructor, require a Todo.
@@ -319,10 +320,6 @@ class DetailScreenApprovedList extends StatelessWidget {
                                     "\nKredit skor : " +
                                     snapshot.data[index]['Creditscore']
                                         .toString()),
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => FundInput(fundid: this.fundid)));
-                                },
                               ),
                             ),
                             _getRadialGauge( snapshot.data[index]['Creditscore'])],
@@ -335,6 +332,14 @@ class DetailScreenApprovedList extends StatelessWidget {
             },
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+              Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => FundInput(fundid: this.fundid)));},
+        label: const Text('Beri Pendanaan'),
+        icon: const Icon(Icons.thumb_up),
+        backgroundColor: Colors.pink,
       ),
     );
   }
