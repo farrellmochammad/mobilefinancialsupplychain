@@ -208,6 +208,8 @@ class FunderDetailScreen extends StatelessWidget {
                                 snapshot.data[index]['submitted_timestamp'] +
                                 "\nJenis Ikan : " +
                                 snapshot.data[index]['fish_type'].toString() +
+                                "\nStatus : " +
+                                snapshot.data[index]['status'] +
                                 "\nJumlah Kolam : " +
                                 snapshot.data[index]['number_of_ponds']
                                     .toString() +

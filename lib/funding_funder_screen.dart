@@ -141,7 +141,7 @@ class ApproverListView extends StatelessWidget {
                       child: ListTile(
                         leading: FlutterLogo(),
                         title: Text('Nik : ' + snapshot.data[index]['nik']),
-                        subtitle: Text("Nama : " + snapshot.data[index]['name'] + " \nAlamat : " + snapshot.data[index]['address'] + "\nStatus : " + snapshot.data[index]['current_status']),
+                        subtitle: Text("Nama : " + snapshot.data[index]['name'] + " \nAlamat : " + snapshot.data[index]['address']),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -202,7 +202,7 @@ class DetailScreen extends StatelessWidget {
                         child: ListTile(
                           leading: FlutterLogo(),
                           title: Text('Nik : ' + snapshot.data[index]['nik']),
-                          subtitle: Text("Nama : " + snapshot.data[index]['name'] + " \nAlamat : " + snapshot.data[index]['address'] + "\nStatus : " + snapshot.data[index]['current_status']),
+                          subtitle: Text("Nama : " + snapshot.data[index]['name'] + " \nAlamat : " + snapshot.data[index]['address']),
                         ),
                       );
                     });

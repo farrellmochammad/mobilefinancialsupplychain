@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:supplychainmobile/approverlist_funder_screen.dart';
 import 'package:supplychainmobile/funding_funder_screen.dart';
+import 'package:supplychainmobile/monitoring_funder_screen.dart';
+import 'package:supplychainmobile/monitoring_analyst_screen.dart';
 import 'package:supplychainmobile/signedlist_funder_screen.dart';
 import 'package:supplychainmobile/signedlist_sales_screen.dart';
 import 'approverlist_screen.dart';
@@ -50,13 +52,22 @@ void main() {
 
   DefaultTabController _buildAnalystPage(){
     return DefaultTabController(
-      length: 1,
+      length: 2,
       child: Scaffold(
-       appBar: AppBarComponent.CreateAppBar("Halaman Analyst "),
-      backgroundColor: const Color(0xFF009688),
+        appBar: AppBar(
+          bottom: TabBar(
+            tabs: [
+              Tab(icon: Icon(Icons.check)),
+              Tab(icon: Icon(Icons.directions_car)),
+            ],
+          ),
+          backgroundColor: const Color(0xFF009688),
+          title: Text('Analyst Page'),
+        ),      backgroundColor: const Color(0xFF009688),
         body: TabBarView(
           children: [
             ApproverListAnalysis(),
+            MonitoringAnalystScreen()
           ],
         ),
       ),
@@ -65,12 +76,13 @@ void main() {
 
   DefaultTabController _buildFunderPage(){
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           bottom: TabBar(
             tabs: [
               Tab(icon: Icon(Icons.person_pin)),
+              Tab(icon: Icon(Icons.directions_car)),
               Tab(icon: Icon(Icons.sign_language_outlined)),
             ],
           ),
@@ -80,6 +92,7 @@ void main() {
         body: TabBarView(
           children: [
             ApproverListFunder(),
+            MonitoringFunderScreen(),
             SignedListFunder()
           ],
         ),

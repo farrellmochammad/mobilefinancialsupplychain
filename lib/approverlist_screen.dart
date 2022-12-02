@@ -148,9 +148,7 @@ class ApproverListView extends StatelessWidget {
                         subtitle: Text("Nama : " +
                             snapshot.data[index]['name'] +
                             " \nAlamat : " +
-                            snapshot.data[index]['address'] +
-                            "\nStatus : " +
-                            snapshot.data[index]['current_status']),
+                            snapshot.data[index]['address']),
                         onTap: () {
                           Navigator.push(
                               context,
@@ -242,6 +240,8 @@ class DetailScreen extends StatelessWidget {
                               snapshot.data[index]['submitted_timestamp'] +
                               "\nJenis Ikan : " +
                               snapshot.data[index]['fish_type'].toString() +
+                              "\nStatus : " +
+                              snapshot.data[index]['status'] +
                               "\nJumlah Kolam : " +
                               snapshot.data[index]['number_of_ponds']
                                   .toString() +
