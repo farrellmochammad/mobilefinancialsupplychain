@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Pdfviewer_screen.dart';
 import 'Component/appbar.dart';
+import 'Component/dialog.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 final storage = const FlutterSecureStorage();
@@ -257,6 +259,31 @@ class DetailScreenApprovedList extends StatelessWidget {
     return json.decode(result.body)['data'];
   }
 
+
+  Future<Response> _rejectfundData(String fundid) async {
+    var token = await storage.read(key: 'token');
+    final response = await http.put(
+      Uri.parse('http://localhost:2021/insertfunderrejected'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer: ' + token.toString(),
+      },
+      body: jsonEncode(<String, dynamic>{
+        'fund_id' : fundid
+      }),
+    );
+
+    if (response.statusCode == 202) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      return Response.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      throw Exception('Failed to Insert sign.');
+    }
+  }
+
   Widget _getRadialGauge(double creditscore) {
     debugPrint("Credit score : " + creditscore.toString());
     return SfRadialGauge(
@@ -335,14 +362,73 @@ class DetailScreenApprovedList extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-              Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => FundInput(fundid: this.fundid)));},
-        label: const Text('Beri Pendanaan'),
-        icon: const Icon(Icons.thumb_up),
-        backgroundColor: Colors.pink,
+      floatingActionButton: SpeedDial( //Speed dial menu
+        marginBottom: 10, //margin bottom
+        icon: Icons.menu, //icon on Floating action button
+        activeIcon: Icons.close, //icon when menu is expanded on button
+        backgroundColor: Colors.deepOrangeAccent, //background color of button
+        foregroundColor: Colors.white, //font color, icon color in button
+        activeBackgroundColor: Colors.deepPurpleAccent, //background color when menu is expanded
+        activeForegroundColor: Colors.white,
+        buttonSize: 56.0, //button size
+        visible: true,
+        closeManually: false,
+        curve: Curves.bounceIn,
+        overlayColor: Colors.black,
+        overlayOpacity: 0.5,
+        elevation: 8.0, //shadow elevation of button
+        shape: CircleBorder(), //shape of button
+
+        children: [
+          SpeedDialChild( //speed dial child
+            child: Icon(Icons.close),
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            label: 'Reject',
+            labelStyle: TextStyle(fontSize: 18.0),
+            onTap: () => showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('Reject Status'),
+                content: Text('Fund id ' + this.fundid + ' rejected'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'Cancel'),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () => {
+                      _rejectfundData(this.fundid),
+                      Navigator.pop(context, 'OK')
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.done_all),
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.white,
+            label: 'Approve',
+            labelStyle: TextStyle(fontSize: 18.0),
+            onTap: () => {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => FundInput(fundid: this.fundid)))
+            },
+          ),
+          //add more menu item childs here
+        ],
       ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () {
+      //         Navigator.of(context)
+      //         .push(MaterialPageRoute(builder: (context) => FundInput(fundid: this.fundid)));},
+      //   label: const Text('Beri Pendanaan'),
+      //   icon: const Icon(Icons.thumb_up),
+      //   backgroundColor: Colors.pink,
+      // ),
     );
   }
 }
