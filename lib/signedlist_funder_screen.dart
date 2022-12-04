@@ -27,7 +27,7 @@ class SignedListViewFunder extends StatelessWidget {
   Future<List<dynamic>> _fetchFundersData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/funders'),
+        Uri.parse('http://localhost:2021/funders_approvefunder'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -71,7 +71,7 @@ class SignedListViewFunder extends StatelessWidget {
                   );
                 });
           } else {
-            return Center(child: Text("Belum ada data petani yang di funding"));
+            return Center(child: Text("Belum ada data petani yang di tanda tangan"));
           }
         },
       ),

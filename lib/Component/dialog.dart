@@ -23,4 +23,26 @@ class AlertComponent {
       ],
     );
   }
+
+
+  AlertDialog CreateAlertDialogRejectFund(BuildContext context, String message){
+    return AlertDialog(
+      title: const Text('Status'),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: <Widget>[
+            Text('${message}'),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Ok'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
 }

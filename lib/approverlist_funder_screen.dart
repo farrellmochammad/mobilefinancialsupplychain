@@ -219,13 +219,15 @@ class FunderDetailScreen extends StatelessWidget {
                                 snapshot.data[index]['amount_of_fund']
                                     .toString()),
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      DetailScreenApprovedList(fundid:  snapshot.data[index]['fund_id']),
-                                ),
-                              );
+                              if (!snapshot.data[index]['status'].toString().contains('Rejected')){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        DetailScreenApprovedList(fundid:  snapshot.data[index]['fund_id']),
+                                  ),
+                                );
+                              }
                             }
                         ),
                       );

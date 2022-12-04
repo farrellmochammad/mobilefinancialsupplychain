@@ -125,6 +125,8 @@ class FunderDetailScreen extends StatelessWidget {
                                 snapshot.data[index]['submitted_timestamp'] +
                                 "\nJenis Ikan : " +
                                 snapshot.data[index]['fish_type'].toString() +
+                                "\nStatus : " +
+                                snapshot.data[index]['status'] +
                                 "\nJumlah Kolam : " +
                                 snapshot.data[index]['number_of_ponds']
                                     .toString() +
@@ -132,13 +134,15 @@ class FunderDetailScreen extends StatelessWidget {
                                 snapshot.data[index]['amount_of_fund']
                                     .toString()),
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      MonitoringDetailScreen(fundid:  snapshot.data[index]['fund_id']),
-                                ),
-                              );
+                              if (!snapshot.data[index]['status'].toString().contains('Rejected')){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        MonitoringDetailScreen(fundid:  snapshot.data[index]['fund_id']),
+                                  ),
+                                );
+                              }
                             }
                         ),
                       );
@@ -384,6 +388,7 @@ class FileInputFormState extends State<FileInputForm> {
     );
   }
 }
+
 
 class Response {
   final String status;

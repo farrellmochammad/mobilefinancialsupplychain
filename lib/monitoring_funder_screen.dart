@@ -72,7 +72,7 @@ class MonitoringList extends StatelessWidget {
                   );
                 });
           } else {
-            return Center(child: Text("Belum ada data petani yang di funding"));
+            return Center(child: Text("Belum ada data petani yang di monitoring"));
           }
         },
       ),
@@ -125,12 +125,25 @@ class FunderDetailScreen extends StatelessWidget {
                                 snapshot.data[index]['submitted_timestamp'] +
                                 "\nJenis Ikan : " +
                                 snapshot.data[index]['fish_type'].toString() +
+                                "\nStatus : " +
+                                snapshot.data[index]['status'] +
                                 "\nJumlah Kolam : " +
                                 snapshot.data[index]['number_of_ponds']
                                     .toString() +
                                 "\nJumlah Pendanaan : " +
                                 snapshot.data[index]['amount_of_fund']
                                     .toString()),
+                            onTap: () {
+                              if (!snapshot.data[index]['status'].toString().contains('Rejected')){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        MonitoringDetailScreen(fundid:  snapshot.data[index]['fund_id']),
+                                  ),
+                                );
+                              }
+                            }
                         ),
                       );
                     });
@@ -144,6 +157,86 @@ class FunderDetailScreen extends StatelessWidget {
     );
   }
 }
+
+class MonitoringDetailScreen extends StatefulWidget {
+  // In the constructor, require a Todo.
+  const MonitoringDetailScreen({super.key, required this.fundid});
+
+
+  // Declare a field that holds the Todo.
+  final String fundid;
+
+  @override
+  State<MonitoringDetailScreen> createState() {
+    // TODO: implement createState
+    return _DetailMonitoringScreen();
+  }
+}
+
+class _DetailMonitoringScreen extends State<MonitoringDetailScreen> {
+  Future<List<dynamic>>? _futureResponse;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _futureResponse = _fetchMonitoringData();
+  }
+
+  Future<List<dynamic>> _fetchMonitoringData() async {
+    var token = await storage.read(key: 'token');
+
+    var result = await http.get(
+        Uri.parse('http://localhost:2021/monitoring_pond/' + widget.fundid),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer: ' + token.toString(),
+        }
+    );
+    return json.decode(result.body)['data'];
+  }
+
+  FutureOr onGoBack(dynamic value) {
+    _futureResponse = _fetchMonitoringData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Use the Todo to create the UI.
+    return Scaffold(
+      appBar: AppBarComponent.CreateAppBar("Monitoring Detil"),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Container(
+          child: FutureBuilder<List<dynamic>>(
+            future: _fetchMonitoringData(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    padding: EdgeInsets.all(10),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Card(
+                        child: ListTile(
+                          leading: FlutterLogo(),
+                          subtitle: Text(
+                              "Tanggal : " + snapshot.data[index]['Timestamp'] +
+                                  "\nBerat : " +
+                                  snapshot.data[index]['Weight'].toString()),
+                        ),
+                      );
+                    });
+              } else {
+                return Center(child: Text("Belum ada data monitoring"));
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 
 
