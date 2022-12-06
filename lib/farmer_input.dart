@@ -143,14 +143,27 @@ class MyCustomFormState extends State<InputDataForm> {
           controller: _dobController,
           decoration: const InputDecoration(
             icon: const Icon(Icons.area_chart),
-            hintText: 'Input Tanggal Lahir',
-            labelText: 'Input Tanggal lahir',
+            hintText: 'Input tanggal lahir',
+            labelText: 'Input tanggal lahir',
           ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter valid date';
-            }
-            return null;
+          readOnly: true,
+          //set it true, so that user will not able to edit text
+          onTap: () async {
+            DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1950),
+                //DateTime.now() - not to allow to choose before today.
+                lastDate: DateTime(2100));
+
+            if (pickedDate != null) {
+              String formattedDate =
+              DateFormat('yyyy-MM-dd').format(pickedDate);
+              setState(() {
+                _dobController.text =
+                    formattedDate; //set output date to TextField value.
+              });
+            } else {}
           },
         ),
         TextFormField(

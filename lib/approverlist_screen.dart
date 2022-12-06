@@ -4,6 +4,7 @@ import 'farmer_input.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Component/appbar.dart';
+import 'Component/tracing_component.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'farmer_update.dart';
 import 'Component/dialog.dart';
@@ -222,52 +223,57 @@ class DetailScreen extends StatelessWidget {
       appBar: AppBarComponent.CreateAppBar("Details of " + nik),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Container(
-          child: FutureBuilder<List<dynamic>>(
-            future: _fecthExperienceData(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                return ListView.builder(
-                    padding: EdgeInsets.all(10),
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        child: ListTile(
-                          title: Text('Nik : ' + this.nik),
-                          subtitle: Text("Disubmit oleh : " +
-                              snapshot.data[index]['submitted_by'] +
-                              "\nWaktu submit : " +
-                              snapshot.data[index]['submitted_timestamp'] +
-                              "\nJenis Ikan : " +
-                              snapshot.data[index]['fish_type'].toString() +
-                              "\nStatus : " +
-                              snapshot.data[index]['status'] +
-                              "\nJumlah Kolam : " +
-                              snapshot.data[index]['number_of_ponds']
-                                  .toString() +
-                              "\nJumlah Pendanaan : " +
-                              snapshot.data[index]['amount_of_fund']
-                                  .toString()),
-                          onTap: (){
-                            if (!snapshot.data[index]['status'].toString().contains('Rejected')){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      DetailScreenApprovedList(fundid:  snapshot.data[index]['fund_id']),
+        child: Column(
+            children: [
+              Flexible(
+                child: Container(
+                  child: FutureBuilder<List<dynamic>>(
+                    future: _fecthExperienceData(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        return ListView.builder(
+                            padding: EdgeInsets.all(10),
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Card(
+                                child: ListTile(
+                                  title: Text('Nik : ' + this.nik),
+                                  subtitle: Text("Disubmit oleh : " +
+                                      snapshot.data[index]['submitted_by'] +
+                                      "\nWaktu submit : " +
+                                      snapshot.data[index]['submitted_timestamp'] +
+                                      "\nJenis Ikan : " +
+                                      snapshot.data[index]['fish_type'].toString() +
+                                      "\nStatus : " +
+                                      snapshot.data[index]['status'] +
+                                      "\nJumlah Kolam : " +
+                                      snapshot.data[index]['number_of_ponds']
+                                          .toString() +
+                                      "\nJumlah Pendanaan : " +
+                                      snapshot.data[index]['amount_of_fund']
+                                          .toString()),
+                                  onTap: (){
+                                    if (!snapshot.data[index]['status'].toString().contains('Rejected')){
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailScreenApprovedList(fundid:  snapshot.data[index]['fund_id']),
+                                        ),
+                                      );
+                                    }
+                                  },
                                 ),
                               );
-                            }
-                          },
-                        ),
-                      );
-                    });
-              } else {
-                return Center(child: Text('Belum ada data petani yang di submit atau perlu di proses'));
-              }
-            },
-          ),
-        ),
+                            });
+                      } else {
+                        return Center(child: Text('Belum ada data petani yang di submit atau perlu di proses'));
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ]),
       ),
       floatingActionButton: SpeedDial( //Speed dial menu
         marginBottom: 10, //margin bottom
@@ -386,46 +392,62 @@ class DetailScreenApprovedList extends StatelessWidget {
       appBar: AppBarComponent.CreateAppBar("Detail of fund"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Container(
-          child: FutureBuilder<List<dynamic>>(
-            future: _fecthExperienceData(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                return ListView.builder(
-                    padding: EdgeInsets.all(10),
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return  Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: Column(
-                          children: <Widget>[
-                            Card(
-                            child: ListTile(
-                              title: Text('Fund ID : ' + this.fundid),
-                              subtitle: Text("Disubmit oleh : " +
-                                  snapshot.data[index]['Submitby'] +
-                                  "\nWaktu submit : " +
-                                  snapshot.data[index]['Timestamp'] +
-                                  "\nJumlah Kolam : " +
-                                  snapshot.data[index]['Numofponds']
-                                      .toString() +
-                                  "\nKredit skor : " +
-                                  snapshot.data[index]['Creditscore']
-                                      .toString()),
+        child: Column(
+            children: [
+              Flexible(
+                child:  Container(
+                child: FutureBuilder<List<dynamic>>(
+                  future: _fecthExperienceData(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                          padding: EdgeInsets.all(10),
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return  Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              child: Column(
+                                children: <Widget>[
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('Fund ID : ' + this.fundid),
+                                      subtitle: Text("Disubmit oleh : " +
+                                          snapshot.data[index]['Submitby'] +
+                                          "\nWaktu submit : " +
+                                          snapshot.data[index]['Timestamp'] +
+                                          "\nJumlah Kolam : " +
+                                          snapshot.data[index]['Numofponds']
+                                              .toString() +
+                                          "\nKredit skor : " +
+                                          snapshot.data[index]['Creditscore']
+                                              .toString()),
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                TracingPage(
+                                                    fundid: this.fundid),
+                                          ),
+                                        );
+                                      },
 
-                            ),
-                          ),
-                          _getRadialGauge( snapshot.data[index]['Creditscore'])],
-                        ),
-                      );
-                    });
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            },
-          ),
-        ),
+                                    ),
+                                  ),
+                                  _getRadialGauge( snapshot.data[index]['Creditscore'])],
+                              ),
+
+                            );
+                          });
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
+              ),
+              ),
+            ]),
       ),
     );
   }
