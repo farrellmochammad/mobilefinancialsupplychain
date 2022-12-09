@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Pdfviewer_screen.dart';
 import 'Component/appbar.dart';
 import 'Component/dialog.dart';
+import 'const/const.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
@@ -114,7 +115,7 @@ class ApproverListView extends StatelessWidget {
   Future<List<dynamic>> _fetchFundersData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/funders_funder'),
+        Uri.parse(url_api + '/funders_funder'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -176,7 +177,7 @@ class FunderDetailScreen extends StatelessWidget {
   Future<List<dynamic>> _fecthFunderData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/funder_nik/' + this.nik),
+        Uri.parse(url_api + '/funder_nik/' + this.nik),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -253,7 +254,7 @@ class DetailScreenApprovedList extends StatelessWidget {
   Future<List<dynamic>> _fecthExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/experience_fund/' + this.fundid),
+        Uri.parse(url_api + '/experience_fund/' + this.fundid),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -265,7 +266,7 @@ class DetailScreenApprovedList extends StatelessWidget {
   Future<Response> _rejectfundData(String fundid) async {
     var token = await storage.read(key: 'token');
     final response = await http.put(
-      Uri.parse('http://localhost:2021/insertfunderrejected'),
+      Uri.parse(url_api + '/insertfunderrejected'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer: ' + token.toString(),
@@ -477,7 +478,7 @@ class AmountInputFormState extends State<FundInputForm> {
   Future<Response> _insertFunder( int amountoffund) async {
     var token = await storage.read(key: 'token');
     final response = await http.put(
-      Uri.parse('http://localhost:2021/insertfunder'),
+      Uri.parse(url_api + '/insertfunder'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer: ' + token.toString(),

@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Component/dialog.dart';
 import 'Component/appbar.dart';
+import 'const/const.dart';
+import 'Component/tracing_component.dart';
 
 
 final storage = const FlutterSecureStorage();
@@ -28,7 +30,7 @@ class MonitoringList extends StatelessWidget {
   Future<List<dynamic>> _fetchFundersData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/funders_analyst'),
+        Uri.parse(url_api + '/funders_analyst'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -91,7 +93,7 @@ class FunderDetailScreen extends StatelessWidget {
   Future<List<dynamic>> _fecthFunderData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/funder_nik/' + this.nik),
+        Uri.parse(url_api + '/funder_nik/' + this.nik),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -133,6 +135,16 @@ class FunderDetailScreen extends StatelessWidget {
                                 "\nJumlah Pendanaan : " +
                                 snapshot.data[index]['amount_of_fund']
                                     .toString()),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      TracingPage(
+                                          fundid:  snapshot.data[index]['fund_id']),
+                                ),
+                              );
+                            }
                         ),
                       );
                     });

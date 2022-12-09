@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Component/dialog.dart';
 import 'Component/appbar.dart';
 import 'package:intl/intl.dart';
+import 'const/const.dart';
 
 
 final storage = const FlutterSecureStorage();
@@ -14,7 +15,7 @@ Future<Response> insertFarmer(String nik,String name,String phone,String dob,Str
   var token = await storage.read(key: 'token');
 
   final response = await http.post(
-    Uri.parse('http://localhost:2021/experience'),
+    Uri.parse(url_api + '/experience'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization': 'Bearer: ' + token.toString(),

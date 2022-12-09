@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
+import 'const/const.dart';
 import 'Component/dialog.dart';
 import 'Component/appbar.dart';
 
@@ -110,7 +110,7 @@ class _ApprovalItem extends StatelessWidget {
 class ApproverListView extends StatelessWidget {
   Future<List<dynamic>> _fecthExperiencesData() async {
     var token = await storage.read(key: 'token');
-    var result = await http.get(Uri.parse('http://localhost:2021/experiences'),
+    var result = await http.get(Uri.parse(url_api + '/experiences'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -170,7 +170,7 @@ class DetailScreen extends StatelessWidget {
   Future<List<dynamic>> _fecthExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/funder_nik/' + this.nik),
+        Uri.parse(url_api + '/funder_nik/' + this.nik),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -279,7 +279,7 @@ class FileInputFormState extends State<FileInputForm> {
   Future<Response> _uploadPdf(String file) async {
     var token = await storage.read(key: 'token');
     final response = await http.put(
-      Uri.parse('http://localhost:2021/uploadfilefunder'),
+      Uri.parse(url_api + '/uploadfilefunder'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer: ' + token.toString(),

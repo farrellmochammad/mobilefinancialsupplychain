@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Component/dialog.dart';
 import 'Component/appbar.dart';
+import 'const/const.dart';
 
 
 final storage = const FlutterSecureStorage();
@@ -28,7 +29,7 @@ class MonitoringList extends StatelessWidget {
   Future<List<dynamic>> _fetchFundersData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/funders_sales'),
+        Uri.parse(url_api + '/funders_sales'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -91,7 +92,7 @@ class FunderDetailScreen extends StatelessWidget {
   Future<List<dynamic>> _fecthFunderData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/funder_nik/' + this.nik),
+        Uri.parse(url_api + '/funder_nik/' + this.nik),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -187,7 +188,7 @@ class _DetailMonitoringScreen extends State<MonitoringDetailScreen> {
     var token = await storage.read(key: 'token');
 
     var result = await http.get(
-        Uri.parse('http://localhost:2021/monitoring_pond/' + widget.fundid),
+        Uri.parse(url_api + '/monitoring_pond/' + widget.fundid),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -291,7 +292,7 @@ class FileInputFormState extends State<FileInputForm> {
   Future<Response> _insertMonitoring(int weight) async {
     var token = await storage.read(key: 'token');
     final response = await http.post(
-      Uri.parse('http://localhost:2021/monitoring_pond'),
+      Uri.parse(url_api + '/monitoring_pond'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer: ' + token.toString(),

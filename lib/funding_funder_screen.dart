@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
+import 'const/const.dart';
 import 'Component/dialog.dart';
 import 'Component/appbar.dart';
 
@@ -117,7 +117,7 @@ class ApproverListView extends StatelessWidget {
   Future<List<dynamic>> _fecthExperiencesData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/experiences'),
+        Uri.parse(url_api + '/experiences'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -173,7 +173,7 @@ class DetailScreen extends StatelessWidget {
   Future<List<dynamic>> _fecthExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/experience/' + this.nik),
+        Uri.parse(url_api + '/experience/' + this.nik),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -257,7 +257,7 @@ class FileInputFormState extends State<FileInputForm> {
   Future<Response> _insertMonitoring(String file) async {
     var token = await storage.read(key: 'token');
     final response = await http.post(
-      Uri.parse('http://localhost:2021/experience'),
+      Uri.parse(url_api + '/experience'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer: ' + token.toString(),

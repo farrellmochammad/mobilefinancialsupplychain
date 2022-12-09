@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'appbar.dart';
+import '../const/const.dart';
 
 
 final storage = const FlutterSecureStorage();
@@ -17,7 +18,7 @@ class TracingMonitoringView extends StatelessWidget {
 
   Future<List<dynamic>> _fetchTracingMonitorings() async {
     var token = await storage.read(key: 'token');
-    var result = await http.get(Uri.parse('http://localhost:2021/tracing_histories/' + fundid),
+    var result = await http.get(Uri.parse(url_api + '/tracing_histories/' + fundid),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -65,7 +66,7 @@ class TracingTransactionView extends StatelessWidget {
 
   Future<List<dynamic>> _fetchTracingTransactions() async {
     var token = await storage.read(key: 'token');
-    var result = await http.get(Uri.parse('http://localhost:2021/tracing_histories/' + fundid),
+    var result = await http.get(Uri.parse(url_api + '/tracing_histories/' + fundid),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -116,7 +117,7 @@ class TracingPage extends StatelessWidget {
   Future<List<dynamic>> _fecthExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/experiences_sales/' + this.fundid),
+        Uri.parse(url_api + '/experiences_sales/' + this.fundid),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),

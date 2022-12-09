@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dashboard_screen.dart';
+import 'const/const.dart';
 import 'package:http/http.dart' as http;
 
 const users = const {
@@ -47,7 +48,7 @@ class LoginScreen extends StatelessWidget {
   Future<String?> _login(LoginData data) async {
     return Future.delayed(loginTime).then((_) async {
       final response = await http.post(
-        Uri.parse('http://localhost:2021/login'),
+        Uri.parse(url_api + '/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

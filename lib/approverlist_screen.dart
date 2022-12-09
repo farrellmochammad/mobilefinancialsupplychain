@@ -9,6 +9,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'farmer_update.dart';
 import 'Component/dialog.dart';
 import 'Component/appbar.dart';
+import 'const/const.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 final storage = const FlutterSecureStorage();
@@ -123,7 +124,7 @@ class _ApprovalItem extends StatelessWidget {
 class ApproverListView extends StatelessWidget {
   Future<List<dynamic>> _fecthExperiencesData() async {
     var token = await storage.read(key: 'token');
-    var result = await http.get(Uri.parse('http://localhost:2021/experiences_sales'),
+    var result = await http.get(Uri.parse(url_api + '/experiences_sales'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -208,7 +209,7 @@ class DetailScreen extends StatelessWidget {
   Future<List<dynamic>> _fecthExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/funder_nik/' + this.nik),
+        Uri.parse(url_api + '/funder_nik/' + this.nik),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -346,7 +347,7 @@ class DetailScreenApprovedList extends StatelessWidget {
   Future<List<dynamic>> _fecthExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/experiences_sales/' + this.fundid),
+        Uri.parse(url_api + '/experiences_sales/' + this.fundid),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -483,7 +484,7 @@ class FunderSubmissionFormState extends State<FunderSubmissionForm> {
   Future<Response> _insertFundSubmission(String fishtype, int numberofponds) async {
     var token = await storage.read(key: 'token');
     final response = await http.post(
-      Uri.parse('http://localhost:2021/funder_submission'),
+      Uri.parse(url_api + '/funder_submission'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer: ' + token.toString(),

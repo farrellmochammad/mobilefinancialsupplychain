@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Component/appbar.dart';
 import 'farmer_update.dart';
+import 'const/const.dart';
 
 final storage = const FlutterSecureStorage();
 
@@ -27,7 +28,7 @@ class SignedListViewSales extends StatelessWidget {
   Future<List<dynamic>> _fetchFundersData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/funders_sales'),
+        Uri.parse(url_api + '/funders_sales'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -79,7 +80,7 @@ class SignedListViewSales extends StatelessWidget {
   }
 }
 
-// Create a Form widget.
+// Create a Form widget.dwdawdaw
 class SignedInputForm extends StatefulWidget {
   // In the constructor, require a Todo.
   const SignedInputForm({super.key, required this.fundid});
@@ -106,7 +107,7 @@ class SignedInputFormState extends State<SignedInputForm> {
   Future<Response> _insertSigned(String imageurl) async {
     var token = await storage.read(key: 'token');
     final response = await http.post(
-      Uri.parse('http://localhost:2021/sign'),
+      Uri.parse(url_api + '/sign'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer: ' + token.toString(),

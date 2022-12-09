@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'Component/appbar.dart';
 import 'farmer_update.dart';
+import 'const/const.dart';
 
 
 
@@ -27,7 +28,7 @@ class SignedListViewFunder extends StatelessWidget {
   Future<List<dynamic>> _fetchFundersData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
-        Uri.parse('http://localhost:2021/funders_approvefunder'),
+        Uri.parse(url_api + '/funders_approvefunder'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
@@ -86,7 +87,7 @@ class ViewSigned extends StatelessWidget {
 
   Future<String> _fetchImageUrl() async {
     var token = await storage.read(key: 'token');
-    var result = await http.get(Uri.parse('http://localhost:2021/sign/' + this.fundid),
+    var result = await http.get(Uri.parse(url_api + '/sign/' + this.fundid),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
