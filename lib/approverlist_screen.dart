@@ -122,7 +122,7 @@ class _ApprovalItem extends StatelessWidget {
 }
 
 class ApproverListView extends StatelessWidget {
-  Future<List<dynamic>> _fecthExperiencesData() async {
+  Future<List<dynamic>> _fetchExperiencesData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(Uri.parse(url_api + '/experiences_sales'),
         headers: <String, String>{
@@ -136,7 +136,7 @@ class ApproverListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: FutureBuilder<List<dynamic>>(
-        future: _fecthExperiencesData(),
+        future: _fetchExperiencesData(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
@@ -147,10 +147,14 @@ class ApproverListView extends StatelessWidget {
                     child: ListTile(
                         leading: FlutterLogo(),
                         title: Text('Nik : ' + snapshot.data[index]['nik']),
-                        subtitle: Text("Nama : " +
-                            snapshot.data[index]['name'] +
-                            " \nAlamat : " +
-                            snapshot.data[index]['address']),
+                        subtitle: Text(
+                                "Nama : " + snapshot.data[index]['name'] +
+                                "\nAlamat : " + snapshot.data[index]['address'] +
+                                "\nTelepon : " + snapshot.data[index]['phone'] +
+                                "\nTanggal lahir : " + snapshot.data[index]['dob'] +
+                                "\nAlamat : " + snapshot.data[index]['address'] +
+                                "\nMulai Ternak : " + snapshot.data[index]['start_farming']
+                        ),
                         onTap: () {
                           Navigator.push(
                               context,
@@ -161,19 +165,16 @@ class ApproverListView extends StatelessWidget {
                                     phone: snapshot.data[index]['phone'],
                                     dob: snapshot.data[index]['dob'],
                                     address: snapshot.data[index]['address'],
-                                    startfarming: snapshot.data[index]
-                                        ['start_farming'],
+                                    startfarming: snapshot.data[index]['start_farming'],
                                     fishtype: snapshot.data[index]['fish_type'],
-                                    numberofponds: snapshot.data[index]
-                                            ['number_of_ponds']
-                                        .toString(),
+                                    numberofponds: snapshot.data[index]['number_of_ponds'].toString(),
                                     notes: snapshot.data[index]['notes']),
                               ));
                         }),
                   );
                 });
           } else {
-            return Center(child: Text('Belum ada data petani'));
+            return Center(child: Text('Belum ada data petani ikan'));
           }
         },
       ),
@@ -206,7 +207,7 @@ class DetailScreen extends StatelessWidget {
   final String numberofponds;
   final String notes;
 
-  Future<List<dynamic>> _fecthExperienceData() async {
+  Future<List<dynamic>> _fetchExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
         Uri.parse(url_api + '/funder_nik/' + this.nik),
@@ -221,7 +222,7 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Details of " + nik),
+      appBar: AppBarComponent.CreateAppBar("Daftar pengajuan modal oleh NIK : " + nik),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -229,7 +230,7 @@ class DetailScreen extends StatelessWidget {
               Flexible(
                 child: Container(
                   child: FutureBuilder<List<dynamic>>(
-                    future: _fecthExperienceData(),
+                    future: _fetchExperienceData(),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (snapshot.hasData) {
                         return ListView.builder(
@@ -238,15 +239,14 @@ class DetailScreen extends StatelessWidget {
                             itemBuilder: (BuildContext context, int index) {
                               return Card(
                                 child: ListTile(
-                                  title: Text('Nik : ' + this.nik),
+                                  title: Text('Fund Id : ' + snapshot.data[index]['fund_id'] +
+                                              '\nStatus : ' + snapshot.data[index]['status']),
                                   subtitle: Text("Disubmit oleh : " +
                                       snapshot.data[index]['submitted_by'] +
                                       "\nWaktu submit : " +
                                       snapshot.data[index]['submitted_timestamp'] +
                                       "\nJenis Ikan : " +
                                       snapshot.data[index]['fish_type'].toString() +
-                                      "\nStatus : " +
-                                      snapshot.data[index]['status'] +
                                       "\nJumlah Kolam : " +
                                       snapshot.data[index]['number_of_ponds']
                                           .toString() +
@@ -298,7 +298,7 @@ class DetailScreen extends StatelessWidget {
             child: Icon(Icons.person_pin),
             backgroundColor: Colors.red,
             foregroundColor: Colors.white,
-            label: 'Update Data',
+            label: 'Edit Data Petani Ikan',
             labelStyle: TextStyle(fontSize: 18.0),
             onTap: () => {
               Navigator.of(context).push(MaterialPageRoute(
@@ -319,7 +319,7 @@ class DetailScreen extends StatelessWidget {
             child: Icon(Icons.brush),
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,
-            label: 'Update Funder menu',
+            label: 'Tambah pengajuan modal',
             labelStyle: TextStyle(fontSize: 18.0),
             onTap: () => {
               Navigator.of(context).push(MaterialPageRoute(
@@ -344,7 +344,7 @@ class DetailScreenApprovedList extends StatelessWidget {
   // Declare a field that holds the Todo.
   final String fundid;
 
-  Future<List<dynamic>> _fecthExperienceData() async {
+  Future<List<dynamic>> _fetchExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
         Uri.parse(url_api + '/experiences_sales/' + this.fundid),
@@ -390,7 +390,7 @@ class DetailScreenApprovedList extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Detail of fund"),
+      appBar: AppBarComponent.CreateAppBar("Detil data pengajuan modal untuk Fund ID : " + fundid),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -398,7 +398,7 @@ class DetailScreenApprovedList extends StatelessWidget {
               Flexible(
                 child:  Container(
                 child: FutureBuilder<List<dynamic>>(
-                  future: _fecthExperienceData(),
+                  future: _fetchExperienceData(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
                       return ListView.builder(
@@ -412,7 +412,6 @@ class DetailScreenApprovedList extends StatelessWidget {
                                 children: <Widget>[
                                   Card(
                                     child: ListTile(
-                                      title: Text('Fund ID : ' + this.fundid),
                                       subtitle: Text("Disubmit oleh : " +
                                           snapshot.data[index]['Submitby'] +
                                           "\nWaktu submit : " +
@@ -504,7 +503,7 @@ class FunderSubmissionFormState extends State<FunderSubmissionForm> {
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
-      throw Exception('Failed to Insert sign.');
+      throw Exception('Gagal memasukkan bukti penerimaan modal.');
     }
   }
 
@@ -570,7 +569,7 @@ class FunderSubmissionFormState extends State<FunderSubmissionForm> {
               });
             },
             child: Text(
-              "Kirim Data",
+              "Simpan",
               style: TextStyle(
                 color: Color(0xffffffff),
               ),

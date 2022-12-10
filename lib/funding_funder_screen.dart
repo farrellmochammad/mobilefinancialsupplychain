@@ -114,7 +114,7 @@ class _ApprovalItem extends StatelessWidget {
 
 class ApproverListView extends StatelessWidget {
 
-  Future<List<dynamic>> _fecthExperiencesData() async {
+  Future<List<dynamic>> _fetchExperiencesData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
         Uri.parse(url_api + '/experiences'),
@@ -130,7 +130,7 @@ class ApproverListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         child: FutureBuilder<List<dynamic>>(
-          future: _fecthExperiencesData(),
+          future: _fetchExperiencesData(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               return ListView.builder(
@@ -170,7 +170,7 @@ class DetailScreen extends StatelessWidget {
   final String nik;
   final String address;
 
-  Future<List<dynamic>> _fecthExperienceData() async {
+  Future<List<dynamic>> _fetchExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
         Uri.parse(url_api + '/experience/' + this.nik),
@@ -191,7 +191,7 @@ class DetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Container(
           child: FutureBuilder<List<dynamic>>(
-            future: _fecthExperienceData(),
+            future: _fetchExperienceData(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
@@ -274,7 +274,7 @@ class FileInputFormState extends State<FileInputForm> {
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
-      throw Exception('Failed to create album.');
+      throw Exception('Gagal input data ke sistem.');
     }
   }
 
@@ -328,7 +328,7 @@ class FileInputFormState extends State<FileInputForm> {
               });
             },
             child: Text(
-              "Kirim Data",
+              "Simpan",
               style: TextStyle(
                 color: Color(0xffffffff),
               ),

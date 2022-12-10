@@ -52,20 +52,18 @@ class MonitoringList extends StatelessWidget {
                   return Card(
                     child: ListTile(
                       leading: FlutterLogo(),
-                      title: Text("Nik : " + snapshot.data[index]['nik']),
-                      subtitle: Text("Jumlah Kolam : " + snapshot
-                          .data[index]['number_of_ponds'].toString() +
-                          " \nJumlah Pendanaan : Rp " + snapshot
-                          .data[index]['amount_of_fund'].toString() +
-                          " \nTipe Ikan : " +
-                          snapshot.data[index]['fish_type']),
+                      title: Text("Fund Id : " + snapshot.data[index]['fund_id']),
+                      subtitle: Text(
+                              "Nik : " + snapshot.data[index]['nik'] +
+                              "\nJumlah Kolam : " + snapshot.data[index]['number_of_ponds'].toString() +
+                              "\nJumlah Pendanaan : Rp " + snapshot.data[index]['amount_of_fund'].toString() +
+                              "\nTipe Ikan : " + snapshot.data[index]['fish_type']),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                FunderDetailScreen(
-                                    nik: snapshot.data[index]['nik']),
+                                MonitoringDetailScreen(fundid:  snapshot.data[index]['fund_id']),
                           ),
                         );
                       },
@@ -89,7 +87,7 @@ class FunderDetailScreen extends StatelessWidget {
   // Declare a field that holds the Todo.
   final String nik;
 
-  Future<List<dynamic>> _fecthFunderData() async {
+  Future<List<dynamic>> _fetchFunderData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
         Uri.parse(url_api + '/funder_nik/' + this.nik),
@@ -105,12 +103,12 @@ class FunderDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Details funder "),
+      appBar: AppBarComponent.CreateAppBar("Detil data pengajuan modal"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
           child: FutureBuilder<List<dynamic>>(
-            future: _fecthFunderData(),
+            future: _fetchFunderData(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
@@ -205,7 +203,7 @@ class _DetailMonitoringScreen extends State<MonitoringDetailScreen> {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Monitoring Detil"),
+      appBar: AppBarComponent.CreateAppBar("Daftar monitor panen"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
@@ -221,14 +219,13 @@ class _DetailMonitoringScreen extends State<MonitoringDetailScreen> {
                         child: ListTile(
                           leading: FlutterLogo(),
                           subtitle: Text(
-                              "Tanggal : " + snapshot.data[index]['Timestamp'] +
-                                  "\nBerat : " +
-                                  snapshot.data[index]['Weight'].toString()),
+                                  "Tanggal : " + snapshot.data[index]['Timestamp'] +
+                                  "\nBerat : " + snapshot.data[index]['Weight'].toString()),
                         ),
                       );
                     });
               } else {
-                return Center(child: Text("Belum ada data monitoring"));
+                return Center(child: Text("Belum ada data monitor panen"));
               }
             },
           ),

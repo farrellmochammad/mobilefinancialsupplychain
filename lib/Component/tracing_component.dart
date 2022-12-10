@@ -114,7 +114,7 @@ class TracingPage extends StatelessWidget {
   // Declare a field that holds the Todo.
   final String fundid;
 
-  Future<List<dynamic>> _fecthExperienceData() async {
+  Future<List<dynamic>> _fetchExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
         Uri.parse(url_api + '/experiences_sales/' + this.fundid),
@@ -129,7 +129,7 @@ class TracingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Tracing Page"),
+      appBar: AppBarComponent.CreateAppBar("Riwayat proses pengajuan dana" ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

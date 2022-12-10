@@ -40,7 +40,7 @@ Future<Response> insertFarmer(String nik,String name,String phone,String dob,Str
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
-    throw Exception('Failed to create album.');
+    throw Exception('Gagal input data ke sistem !');
   }
 }
 
@@ -49,7 +49,7 @@ class FarmerInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Form Input Petani "),
+      appBar: AppBarComponent.CreateAppBar("Tambah data petani ikan"),
         body: InputDataForm(),
       );
   }
@@ -265,7 +265,7 @@ class MyCustomFormState extends State<InputDataForm> {
               });
             },
             child: Text(
-              "Kirim Data",
+              "Simpan",
               style: TextStyle(
                 color: Color(0xffffffff),
               ),

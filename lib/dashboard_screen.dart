@@ -37,7 +37,7 @@ void main() {
             ],
           ),
           backgroundColor: const Color(0xFF009688),
-          title: Text('Sales Page'),
+          title: Text('Agen Sales'),
         ),
         body: TabBarView(
           children: [
@@ -62,7 +62,7 @@ void main() {
             ],
           ),
           backgroundColor: const Color(0xFF009688),
-          title: Text('Analyst Page'),
+          title: Text('Tim Analis'),
         ),      backgroundColor: const Color(0xFF009688),
         body: TabBarView(
           children: [
@@ -87,7 +87,7 @@ void main() {
             ],
           ),
           backgroundColor: const Color(0xFF009688),
-          title: Text('Funder Page'),
+          title: Text('Funder'),
         ),
         body: TabBarView(
           children: [

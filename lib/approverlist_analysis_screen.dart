@@ -108,7 +108,7 @@ class _ApprovalItem extends StatelessWidget {
 }
 
 class ApproverListView extends StatelessWidget {
-  Future<List<dynamic>> _fecthExperiencesData() async {
+  Future<List<dynamic>> _fetchExperiencesData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(Uri.parse(url_api + '/experiences'),
         headers: <String, String>{
@@ -122,7 +122,7 @@ class ApproverListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: FutureBuilder<List<dynamic>>(
-        future: _fecthExperiencesData(),
+        future: _fetchExperiencesData(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
@@ -133,10 +133,14 @@ class ApproverListView extends StatelessWidget {
                     child: ListTile(
                       leading: FlutterLogo(),
                       title: Text('Nik : ' + snapshot.data[index]['nik']),
-                      subtitle: Text("Nama : " +
-                          snapshot.data[index]['name'] +
-                          " \nAlamat : " +
-                          snapshot.data[index]['address']),
+                      subtitle: Text(
+                          "Nama : " + snapshot.data[index]['name'] +
+                              "\nAlamat : " + snapshot.data[index]['address'] +
+                              "\nTelepon : " + snapshot.data[index]['phone'] +
+                              "\nTanggal lahir : " + snapshot.data[index]['dob'] +
+                              "\nAlamat : " + snapshot.data[index]['address'] +
+                              "\nMulai Ternak : " + snapshot.data[index]['start_farming']
+                      ),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -167,7 +171,7 @@ class DetailScreen extends StatelessWidget {
   final String nik;
   final String address;
 
-  Future<List<dynamic>> _fecthExperienceData() async {
+  Future<List<dynamic>> _fetchExperienceData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
         Uri.parse(url_api + '/funder_nik/' + this.nik),
@@ -182,12 +186,12 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-        appBar: AppBarComponent.CreateAppBar("Details of nik " + nik),
+        appBar: AppBarComponent.CreateAppBar("Detil data pengajuan modal untuk NIK : " + nik),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Container(
             child: FutureBuilder<List<dynamic>>(
-              future: _fecthExperienceData(),
+              future: _fetchExperienceData(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(
@@ -196,21 +200,20 @@ class DetailScreen extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) {
                         return Card(
                           child: ListTile(
-                            title: Text('Nik : ' + this.nik),
-                            subtitle: Text("Disubmit oleh : " +
-                                snapshot.data[index]['submitted_by'] +
-                                "\nWaktu submit : " +
-                                snapshot.data[index]['submitted_timestamp'] +
-                                "\nJenis Ikan : " +
-                                snapshot.data[index]['fish_type'].toString() +
-                                "\nStatus : " +
-                                snapshot.data[index]['status'] +
-                                "\nJumlah Kolam : " +
-                                snapshot.data[index]['number_of_ponds']
-                                    .toString() +
-                                "\nJumlah Pendanaan : " +
-                                snapshot.data[index]['amount_of_fund']
-                                    .toString()),
+                              title: Text('Fund Id : ' + snapshot.data[index]['fund_id'] +
+                                  '\nStatus : ' + snapshot.data[index]['status']),
+                              subtitle: Text("Disubmit oleh : " +
+                                  snapshot.data[index]['submitted_by'] +
+                                  "\nWaktu submit : " +
+                                  snapshot.data[index]['submitted_timestamp'] +
+                                  "\nJenis Ikan : " +
+                                  snapshot.data[index]['fish_type'].toString() +
+                                  "\nJumlah Kolam : " +
+                                  snapshot.data[index]['number_of_ponds']
+                                      .toString() +
+                                  "\nJumlah Pendanaan : " +
+                                  snapshot.data[index]['amount_of_fund']
+                                      .toString()),
                               onTap: () {
                                 if (!snapshot.data[index]['status'].toString().contains('Rejected')){
                                   Navigator.push(

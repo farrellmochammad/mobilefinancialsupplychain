@@ -89,7 +89,7 @@ class FunderDetailScreen extends StatelessWidget {
   // Declare a field that holds the Todo.
   final String nik;
 
-  Future<List<dynamic>> _fecthFunderData() async {
+  Future<List<dynamic>> _fetchFunderData() async {
     var token = await storage.read(key: 'token');
     var result = await http.get(
         Uri.parse(url_api + '/funder_nik/' + this.nik),
@@ -110,7 +110,7 @@ class FunderDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Container(
           child: FutureBuilder<List<dynamic>>(
-            future: _fecthFunderData(),
+            future: _fetchFunderData(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
