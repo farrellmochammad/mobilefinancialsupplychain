@@ -64,8 +64,7 @@ class MonitoringList extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                FunderDetailScreen(
-                                    nik: snapshot.data[index]['nik']),
+                                MonitoringDetailScreen(fundid:  snapshot.data[index]['fund_id']),
                           ),
                         );
                       },

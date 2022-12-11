@@ -351,7 +351,7 @@ class DetailScreenApprovedList extends StatelessWidget {
                                         .toString()),
                               ),
                             ),
-                            _getRadialGauge( snapshot.data[index]['Creditscore'])],
+                            _getRadialGauge( snapshot.data[index]['Creditscore'].toDouble())],
                         ),
                       );
                     });
