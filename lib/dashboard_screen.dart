@@ -31,9 +31,9 @@ void main() {
         appBar: AppBar(
           bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.check)),
-              Tab(icon: Icon(Icons.directions_car)),
-              Tab(icon: Icon(Icons.sign_language_outlined)),
+              Tab(text: 'Data Petani'),
+              Tab(text: 'Monitor Panen'),
+              Tab(text: 'Terima modal'),
             ],
           ),
           backgroundColor: const Color(0xFF009688),
@@ -57,8 +57,8 @@ void main() {
         appBar: AppBar(
           bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.check)),
-              Tab(icon: Icon(Icons.directions_car)),
+              Tab(text: 'Upload Proposal'),
+              Tab(text: 'Proses Pemodalan')
             ],
           ),
           backgroundColor: const Color(0xFF009688),
@@ -81,9 +81,9 @@ void main() {
         appBar: AppBar(
           bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.person_pin)),
-              Tab(icon: Icon(Icons.directions_car)),
-              Tab(icon: Icon(Icons.sign_language_outlined)),
+              Tab(text: 'Pendanaan'),
+              Tab(text: 'Monitor Panen'),
+              Tab(text: 'Bukti Terima'),
             ],
           ),
           backgroundColor: const Color(0xFF009688),

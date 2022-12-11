@@ -351,7 +351,7 @@ class FileInputFormState extends State<FileInputForm> {
               });
             },
             child: Text(
-              "Kirim Data",
+              "Simpan",
               style: TextStyle(
                 color: Color(0xffffffff),
               ),

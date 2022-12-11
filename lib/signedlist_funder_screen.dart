@@ -103,7 +103,7 @@ class ViewSigned extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBarComponent.CreateAppBar("Sign Image"),
+        appBar: AppBarComponent.CreateAppBar("Gambar Bukti Terima Modal"),
         body: Container (
           child: FutureBuilder<String>(
               future: _fetchImageUrl(),

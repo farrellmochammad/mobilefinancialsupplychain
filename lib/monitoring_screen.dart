@@ -52,13 +52,12 @@ class MonitoringList extends StatelessWidget {
                   return Card(
                     child: ListTile(
                       leading: FlutterLogo(),
-                      title: Text("Nik : " + snapshot.data[index]['nik']),
-                      subtitle: Text("Jumlah Kolam : " + snapshot
-                          .data[index]['number_of_ponds'].toString() +
-                          " \nJumlah Pendanaan : Rp " + snapshot
-                          .data[index]['amount_of_fund'].toString() +
-                          " \nTipe Ikan : " +
-                          snapshot.data[index]['fish_type']),
+                      title: Text("Fund Id : " + snapshot.data[index]['fund_id']),
+                      subtitle: Text(
+                              "Nik : " + snapshot.data[index]['nik'] +
+                              "\nJumlah Kolam : " + snapshot.data[index]['number_of_ponds'].toString() +
+                              "\nJumlah Pendanaan : Rp " + snapshot.data[index]['amount_of_fund'].toString() +
+                              "\nTipe Ikan : " + snapshot.data[index]['fish_type']),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -204,7 +203,7 @@ class _DetailMonitoringScreen extends State<MonitoringDetailScreen> {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Monitoring Detil"),
+      appBar: AppBarComponent.CreateAppBar("Detil Monitor Panen"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
@@ -220,9 +219,9 @@ class _DetailMonitoringScreen extends State<MonitoringDetailScreen> {
                         child: ListTile(
                           leading: FlutterLogo(),
                           subtitle: Text(
-                              "Tanggal : " + snapshot.data[index]['Timestamp'] +
-                                  "\nBerat : " +
-                                  snapshot.data[index]['Weight'].toString()),
+                                  "Tanggal : " + snapshot.data[index]['Timestamp'] +
+                                  "\nBerat : " + snapshot.data[index]['Weight'].toString() + " gram"
+                          ),
                         ),
                       );
                     });
@@ -367,7 +366,7 @@ class FileInputFormState extends State<FileInputForm> {
               });
             },
             child: Text(
-              "Kirim Data",
+              "Simpan",
               style: TextStyle(
                 color: Color(0xffffffff),
               ),

@@ -68,7 +68,7 @@ class LoginScreen extends StatelessWidget {
       } else {
         // If the server did not return a 201 CREATED response,
         // then throw an exception.
-        return 'There are networking problem';
+        return 'Login gagal';
       }
       return null;
     });

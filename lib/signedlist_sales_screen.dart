@@ -51,13 +51,12 @@ class SignedListViewSales extends StatelessWidget {
                   return Card(
                     child: ListTile(
                       leading: FlutterLogo(),
-                      title: Text("Nik : " + snapshot.data[index]['nik']),
-                      subtitle: Text("Jumlah Kolam : " + snapshot
-                          .data[index]['number_of_ponds'].toString() +
-                          " \nJumlah Pendanaan : Rp " + snapshot
-                          .data[index]['amount_of_fund'].toString() +
-                          " \nTipe Ikan : " +
-                          snapshot.data[index]['fish_type']),
+                      title: Text("Fund Id : " + snapshot.data[index]['fund_id']),
+                      subtitle: Text(
+                          "Nik : " + snapshot.data[index]['nik'] +
+                          "\nJumlah Kolam : " + snapshot.data[index]['number_of_ponds'].toString() +
+                          "\nJumlah Pendanaan : Rp " + snapshot.data[index]['amount_of_fund'].toString() +
+                          "\nTipe Ikan : " + snapshot.data[index]['fish_type']),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -151,8 +150,8 @@ class SignedInputFormState extends State<SignedInputForm> {
           controller: _fileController,
           decoration: const InputDecoration(
             icon: const Icon(Icons.picture_as_pdf),
-            hintText: 'Link url image',
-            labelText: 'Link Url image',
+            hintText: 'Link URL gambar',
+            labelText: 'Link URL gambar',
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -177,7 +176,7 @@ class SignedInputFormState extends State<SignedInputForm> {
               });
             },
             child: Text(
-              "Kirim Data",
+              "Simpan",
               style: TextStyle(
                 color: Color(0xffffffff),
               ),
@@ -193,7 +192,7 @@ class SignedInputFormState extends State<SignedInputForm> {
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Upload image of sign"),
+      appBar: AppBarComponent.CreateAppBar("Upload terima modal"),
       body: Form(
         key: _formKey,
         child:  (_futureResponse == null) ? buildListView() : buildFutureBuilder(),

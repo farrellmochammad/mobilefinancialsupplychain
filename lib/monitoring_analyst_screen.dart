@@ -53,19 +53,19 @@ class MonitoringList extends StatelessWidget {
                   return Card(
                     child: ListTile(
                       leading: FlutterLogo(),
-                      title: Text("Fund Id : " + snapshot.data[index]['fund_id']),
+                      title: Text(
+                          'Fund Id : ' + snapshot.data[index]['fund_id'] +
+                          '\nStatus : ' + snapshot.data[index]['status']),
                       subtitle: Text(
-                          "\nNIK : " + snapshot.data[index]['nik'] +
+                          "Jenis Ikan : " + snapshot.data[index]['fish_type'].toString() +
                           "\nJumlah Kolam : " + snapshot.data[index]['number_of_ponds'].toString() +
-                          "\nJumlah Pendanaan : Rp. " + snapshot.data[index]['amount_of_fund'].toString() +
-                          "\nTipe Ikan : " + snapshot.data[index]['fish_type']),
+                          "\nJumlah Pendanaan : " + snapshot.data[index]['amount_of_fund'].toString()),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                FunderDetailScreen(
-                                    nik: snapshot.data[index]['nik']),
+                                TracingPage(fundid: snapshot.data[index]['fund_id']),
                           ),
                         );
                       },
@@ -138,8 +138,7 @@ class FunderDetailScreen extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      TracingPage(
-                                          fundid:  snapshot.data[index]['fund_id']),
+                                      TracingPage(fundid:  snapshot.data[index]['fund_id']),
                                 ),
                               );
                             }
