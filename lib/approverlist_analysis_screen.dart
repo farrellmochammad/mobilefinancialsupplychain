@@ -215,7 +215,7 @@ class DetailScreen extends StatelessWidget {
                                   snapshot.data[index]['amount_of_fund']
                                       .toString()),
                               onTap: () {
-                                if (!snapshot.data[index]['status'].toString().contains('Rejected')){
+                                if (!snapshot.data[index]['status'].toString().contains('Rejected') && !snapshot.data[index]['status'].toString().contains('Signed')){
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -224,6 +224,7 @@ class DetailScreen extends StatelessWidget {
                                     ),
                                   );
                                 }
+
                               }
                           ),
                         );

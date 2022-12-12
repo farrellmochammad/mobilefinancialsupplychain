@@ -58,14 +58,15 @@ class SignedListViewSales extends StatelessWidget {
                           "\nJumlah Pendanaan : Rp " + snapshot.data[index]['amount_of_fund'].toString() +
                           "\nTipe Ikan : " + snapshot.data[index]['fish_type']),
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                SignedInputForm(
-                                    fundid: snapshot.data[index]['fund_id']),
-                          ),
-                        );
+                        if (!snapshot.data[index]['status'].toString().contains('Signed')){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  SignedInputForm(
+                                      fundid: snapshot.data[index]['fund_id'])                            ),
+                          );
+                        }
                       },
                     ),
                   );

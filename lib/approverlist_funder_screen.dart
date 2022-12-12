@@ -111,16 +111,13 @@ class _ApprovalItem extends StatelessWidget {
 }
 
 class ApproverListView extends StatelessWidget {
-
   Future<List<dynamic>> _fetchFundersData() async {
     var token = await storage.read(key: 'token');
-    var result = await http.get(
-        Uri.parse(url_api + '/funders_funder'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer: ' + token.toString(),
-        }
-    );
+    var result = await http
+        .get(Uri.parse(url_api + '/funders_funder'), headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer: ' + token.toString(),
+    });
     return json.decode(result.body)['data'];
   }
 
@@ -138,26 +135,48 @@ class ApproverListView extends StatelessWidget {
                   return Card(
                     child: ListTile(
                       leading: FlutterLogo(),
-                      title: Text("Fund Id : " + snapshot.data[index]['fund_id']),
-                      subtitle: Text(
-                          "Nik : " + snapshot.data[index]['nik'] +
-                          "\nJumlah Kolam : " + snapshot.data[index]['number_of_ponds'].toString() +
-                          "\nJumlah Pendanaan : Rp " + snapshot.data[index]['amount_of_fund'].toString() +
-                          "\nTipe Ikan : " + snapshot.data[index]['fish_type']),
+                      title:
+                          Text("Fund Id : " + snapshot.data[index]['fund_id']),
+                      subtitle: Text("Nik : " +
+                          snapshot.data[index]['nik'] +
+                          "\nJumlah Kolam : " +
+                          snapshot.data[index]['number_of_ponds'].toString() +
+                          "\nJumlah Pendanaan : Rp " +
+                          snapshot.data[index]['amount_of_fund'].toString() +
+                          "\nTipe Ikan : " +
+                          snapshot.data[index]['fish_type']),
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                DetailScreenApprovedList(fundid:  snapshot.data[index]['fund_id']),
-                          ),
-                        );
+                        if (snapshot.data[index]['status'].toString() ==
+                            'Pending Fund') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailScreenApprovedList(
+                                  fundid: snapshot.data[index]['fund_id']),
+                            ),
+                          );
+                        }
+
+                        if (snapshot.data[index]['status'].toString() ==
+                                'Approved' ||
+                            snapshot.data[index]['status'].toString() ==
+                                'Signed' ||
+                            snapshot.data[index]['status'].toString() ==
+                                'Rejected') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailScreenApprovedList2(
+                                  fundid: snapshot.data[index]['fund_id']),
+                            ),
+                          );
+                        }
                       },
                     ),
                   );
                 });
           } else {
-            return Center(child: CircularProgressIndicator());
+            return Center(child: Text('Belum ada data petani yang masuk'));
           }
         },
       ),
@@ -174,13 +193,11 @@ class FunderDetailScreen extends StatelessWidget {
 
   Future<List<dynamic>> _fetchFunderData() async {
     var token = await storage.read(key: 'token');
-    var result = await http.get(
-        Uri.parse(url_api + '/funder_nik/' + this.nik),
+    var result = await http.get(Uri.parse(url_api + '/funder_nik/' + this.nik),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer: ' + token.toString(),
-        }
-    );
+        });
     return json.decode(result.body)['data'];
   }
 
@@ -188,7 +205,8 @@ class FunderDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Daftar pengajuan modal oleh NIK : " + nik),
+      appBar: AppBarComponent.CreateAppBar(
+          "Daftar pengajuan modal oleh NIK : " + nik),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
@@ -202,8 +220,10 @@ class FunderDetailScreen extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
                         child: ListTile(
-                            title: Text('Fund Id : ' + snapshot.data[index]['fund_id'] +
-                                '\nStatus : ' + snapshot.data[index]['status']),
+                            title: Text('Fund Id : ' +
+                                snapshot.data[index]['fund_id'] +
+                                '\nStatus : ' +
+                                snapshot.data[index]['status']),
                             subtitle: Text("Disubmit oleh : " +
                                 snapshot.data[index]['submitted_by'] +
                                 "\nWaktu submit : " +
@@ -217,16 +237,175 @@ class FunderDetailScreen extends StatelessWidget {
                                 snapshot.data[index]['amount_of_fund']
                                     .toString()),
                             onTap: () {
-                              if (!snapshot.data[index]['status'].toString().contains('Rejected')){
+                              if (!snapshot.data[index]['status']
+                                  .toString()
+                                  .contains('Rejected')) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        DetailScreenApprovedList(fundid:  snapshot.data[index]['fund_id']),
+                                        DetailScreenApprovedList(
+                                            fundid: snapshot.data[index]
+                                                ['fund_id']),
                                   ),
                                 );
                               }
-                            }
+
+                              if (!snapshot.data[index]['status']
+                                  .toString()
+                                  .contains('Signed')) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        DetailScreenApprovedList(
+                                            fundid: snapshot.data[index]
+                                                ['fund_id']),
+                                  ),
+                                );
+                              }
+                            }),
+                      );
+                    });
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DetailScreenApprovedList2 extends StatelessWidget {
+  // In the constructor, require a Todo.
+  const DetailScreenApprovedList2({super.key, required this.fundid});
+
+  // Declare a field that holds the Todo.
+  final String fundid;
+
+  Future<List<dynamic>> _fetchExperienceData() async {
+    var token = await storage.read(key: 'token');
+    var result = await http.get(
+        Uri.parse(url_api + '/experience_fund/' + this.fundid),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer: ' + token.toString(),
+        });
+    return json.decode(result.body)['data'];
+  }
+
+  Future<Response> _rejectfundData(String fundid) async {
+    var token = await storage.read(key: 'token');
+    final response = await http.put(
+      Uri.parse(url_api + '/insertfunderrejected'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer: ' + token.toString(),
+      },
+      body: jsonEncode(<String, dynamic>{'fund_id': fundid}),
+    );
+
+    if (response.statusCode == 202) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      return Response.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      throw Exception('Failed to Insert sign.');
+    }
+  }
+
+  Widget _getRadialGauge(double creditscore) {
+    debugPrint("Credit score : " + creditscore.toString());
+    return SfRadialGauge(
+      axes: <RadialAxis>[
+        RadialAxis(
+            showLabels: false,
+            showAxisLine: false,
+            showTicks: false,
+            minimum: 0,
+            maximum: 300,
+            ranges: <GaugeRange>[
+              GaugeRange(
+                  startValue: 0,
+                  endValue: 100,
+                  color: Color(0xFFFE2A25),
+                  label: 'Rendah',
+                  sizeUnit: GaugeSizeUnit.factor,
+                  labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize: 20),
+                  startWidth: 0.65,
+                  endWidth: 0.65),
+              GaugeRange(
+                startValue: 100,
+                endValue: 200,
+                color: Color(0xFFFFBA00),
+                label: 'Sedang',
+                labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize: 20),
+                startWidth: 0.65,
+                endWidth: 0.65,
+                sizeUnit: GaugeSizeUnit.factor,
+              ),
+              GaugeRange(
+                startValue: 200,
+                endValue: 300,
+                color: Color(0xFF00AB47),
+                label: 'Tinggi',
+                labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize: 20),
+                sizeUnit: GaugeSizeUnit.factor,
+                startWidth: 0.65,
+                endWidth: 0.65,
+              ),
+            ],
+            pointers: <GaugePointer>[
+              NeedlePointer(value: creditscore)
+            ])
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Use the Todo to create the UI.
+    return Scaffold(
+      appBar: AppBarComponent.CreateAppBar(
+          "Detil data pengajuan modal untuk Fund ID : " + fundid),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Container(
+          child: FutureBuilder<List<dynamic>>(
+            future: _fetchExperienceData(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    padding: EdgeInsets.all(10),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: Column(
+                          children: <Widget>[
+                            Card(
+                              child: ListTile(
+                                title: Text('Fund ID : ' + this.fundid),
+                                subtitle: Text("Disubmit oleh : " +
+                                    snapshot.data[index]['Submitby'] +
+                                    "\nWaktu submit : " +
+                                    snapshot.data[index]['Timestamp'] +
+                                    "\nJumlah Kolam : " +
+                                    snapshot.data[index]['Numofponds']
+                                        .toString() +
+                                    "\nKredit skor : " +
+                                    snapshot.data[index]['Creditscore']
+                                        .toString()),
+                              ),
+                            ),
+                            _getRadialGauge(
+                                snapshot.data[index]['Creditscore'].toDouble())
+                          ],
                         ),
                       );
                     });
@@ -259,7 +438,6 @@ class DetailScreenApprovedList extends StatelessWidget {
     return json.decode(result.body)['data'];
   }
 
-
   Future<Response> _rejectfundData(String fundid) async {
     var token = await storage.read(key: 'token');
     final response = await http.put(
@@ -268,9 +446,7 @@ class DetailScreenApprovedList extends StatelessWidget {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer: ' + token.toString(),
       },
-      body: jsonEncode(<String, dynamic>{
-        'fund_id' : fundid
-      }),
+      body: jsonEncode(<String, dynamic>{'fund_id': fundid}),
     );
 
     if (response.statusCode == 202) {
@@ -287,30 +463,47 @@ class DetailScreenApprovedList extends StatelessWidget {
   Widget _getRadialGauge(double creditscore) {
     debugPrint("Credit score : " + creditscore.toString());
     return SfRadialGauge(
-      axes:<RadialAxis>[
-        RadialAxis(showLabels: false, showAxisLine: false, showTicks: false,
-            minimum: 0, maximum: 300,
-            ranges: <GaugeRange>[GaugeRange(startValue: 0, endValue: 100,
-                color: Color(0xFFFE2A25), label: 'Rendah',
+      axes: <RadialAxis>[
+        RadialAxis(
+            showLabels: false,
+            showAxisLine: false,
+            showTicks: false,
+            minimum: 0,
+            maximum: 300,
+            ranges: <GaugeRange>[
+              GaugeRange(
+                  startValue: 0,
+                  endValue: 100,
+                  color: Color(0xFFFE2A25),
+                  label: 'Rendah',
+                  sizeUnit: GaugeSizeUnit.factor,
+                  labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize: 20),
+                  startWidth: 0.65,
+                  endWidth: 0.65),
+              GaugeRange(
+                startValue: 100,
+                endValue: 200,
+                color: Color(0xFFFFBA00),
+                label: 'Sedang',
+                labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize: 20),
+                startWidth: 0.65,
+                endWidth: 0.65,
                 sizeUnit: GaugeSizeUnit.factor,
-                labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize:  20),
-                startWidth: 0.65, endWidth: 0.65
-            ),GaugeRange(startValue: 100, endValue: 200,
-              color:Color(0xFFFFBA00), label: 'Sedang',
-              labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize:   20),
-              startWidth: 0.65, endWidth: 0.65, sizeUnit: GaugeSizeUnit.factor,
-            ),
-              GaugeRange(startValue: 200, endValue: 300,
-                color:Color(0xFF00AB47), label: 'Tinggi',
-                labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize:   20),
-                sizeUnit: GaugeSizeUnit.factor,
-                startWidth: 0.65, endWidth: 0.65,
               ),
-
+              GaugeRange(
+                startValue: 200,
+                endValue: 300,
+                color: Color(0xFF00AB47),
+                label: 'Tinggi',
+                labelStyle: GaugeTextStyle(fontFamily: 'Times', fontSize: 20),
+                sizeUnit: GaugeSizeUnit.factor,
+                startWidth: 0.65,
+                endWidth: 0.65,
+              ),
             ],
-            pointers: <GaugePointer>[NeedlePointer(value: creditscore
-            )]
-        )
+            pointers: <GaugePointer>[
+              NeedlePointer(value: creditscore)
+            ])
       ],
     );
   }
@@ -319,7 +512,8 @@ class DetailScreenApprovedList extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Detil data pengajuan modal untuk Fund ID : " + fundid),
+      appBar: AppBarComponent.CreateAppBar(
+          "Detil data pengajuan modal untuk Fund ID : " + fundid),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
@@ -351,7 +545,9 @@ class DetailScreenApprovedList extends StatelessWidget {
                                         .toString()),
                               ),
                             ),
-                            _getRadialGauge( snapshot.data[index]['Creditscore'].toDouble())],
+                            _getRadialGauge(
+                                snapshot.data[index]['Creditscore'].toDouble())
+                          ],
                         ),
                       );
                     });
@@ -362,25 +558,36 @@ class DetailScreenApprovedList extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: SpeedDial( //Speed dial menu
-        marginBottom: 10, //margin bottom
-        icon: Icons.menu, //icon on Floating action button
-        activeIcon: Icons.close, //icon when menu is expanded on button
-        backgroundColor: Colors.deepOrangeAccent, //background color of button
-        foregroundColor: Colors.white, //font color, icon color in button
-        activeBackgroundColor: Colors.deepPurpleAccent, //background color when menu is expanded
+      floatingActionButton: SpeedDial(
+        //Speed dial menu
+        marginBottom: 10,
+        //margin bottom
+        icon: Icons.menu,
+        //icon on Floating action button
+        activeIcon: Icons.close,
+        //icon when menu is expanded on button
+        backgroundColor: Colors.deepOrangeAccent,
+        //background color of button
+        foregroundColor: Colors.white,
+        //font color, icon color in button
+        activeBackgroundColor: Colors.deepPurpleAccent,
+        //background color when menu is expanded
         activeForegroundColor: Colors.white,
-        buttonSize: 56.0, //button size
+        buttonSize: 56.0,
+        //button size
         visible: true,
         closeManually: false,
         curve: Curves.bounceIn,
         overlayColor: Colors.black,
         overlayOpacity: 0.5,
-        elevation: 8.0, //shadow elevation of button
-        shape: CircleBorder(), //shape of button
+        elevation: 8.0,
+        //shadow elevation of button
+        shape: CircleBorder(),
+        //shape of button
 
         children: [
-          SpeedDialChild( //speed dial child
+          SpeedDialChild(
+            //speed dial child
             child: Icon(Icons.close),
             backgroundColor: Colors.red,
             foregroundColor: Colors.white,
@@ -414,8 +621,8 @@ class DetailScreenApprovedList extends StatelessWidget {
             label: 'Approve',
             labelStyle: TextStyle(fontSize: 18.0),
             onTap: () => {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => FundInput(fundid: this.fundid)))
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => FundInput(fundid: this.fundid)))
             },
           ),
           //add more menu item childs here
@@ -472,7 +679,7 @@ class AmountInputFormState extends State<FundInputForm> {
 
   Future<Response>? _futureResponse;
 
-  Future<Response> _insertFunder( int amountoffund) async {
+  Future<Response> _insertFunder(int amountoffund) async {
     var token = await storage.read(key: 'token');
     final response = await http.put(
       Uri.parse(url_api + '/insertfunder'),
@@ -482,7 +689,7 @@ class AmountInputFormState extends State<FundInputForm> {
       },
       body: jsonEncode(<String, dynamic>{
         'fund_id': widget.fundid,
-        'amount_of_fund' : amountoffund
+        'amount_of_fund': amountoffund
       }),
     );
 
@@ -541,9 +748,8 @@ class AmountInputFormState extends State<FundInputForm> {
             ),
             onPressed: () {
               setState(() {
-                _futureResponse = _insertFunder(
-                    int.parse(_fundController.text)
-                    );
+                _futureResponse =
+                    _insertFunder(int.parse(_fundController.text));
               });
             },
             child: Text(
