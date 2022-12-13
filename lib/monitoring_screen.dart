@@ -338,7 +338,7 @@ class FileInputFormState extends State<FileInputForm> {
           controller: _weightController,
           decoration: const InputDecoration(
             icon: const Icon(Icons.scale),
-            hintText: 'Dalam kg',
+            hintText: 'Dalam gram',
             labelText: 'Berat',
           ),
           validator: (value) {

@@ -220,7 +220,7 @@ class _DetailMonitoringScreen extends State<MonitoringDetailScreen> {
                           leading: FlutterLogo(),
                           subtitle: Text(
                                   "Tanggal : " + snapshot.data[index]['Timestamp'] +
-                                  "\nBerat : " + snapshot.data[index]['Weight'].toString()),
+                                  "\nBerat : " + snapshot.data[index]['Weight'].toString() + ' gram'),
                         ),
                       );
                     });

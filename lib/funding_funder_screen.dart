@@ -302,7 +302,7 @@ class FileInputFormState extends State<FileInputForm> {
           controller: _fileController,
           decoration: const InputDecoration(
             icon: const Icon(Icons.picture_as_pdf),
-            hintText: 'Dalam kg',
+            hintText: 'Dalam gram',
             labelText: 'Berat',
           ),
           validator: (value) {
