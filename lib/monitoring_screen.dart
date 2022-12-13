@@ -256,7 +256,7 @@ class FileInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarComponent.CreateAppBar("Form Pendanaan "),
+      appBar: AppBarComponent.CreateAppBar("Form berat panen "),
       body: FileInputForm(fundid: this.fundid),
     );
   }
